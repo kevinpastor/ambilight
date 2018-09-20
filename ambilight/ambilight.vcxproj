@@ -117,6 +117,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArduinoSerial.h" />
+    <ClInclude Include="Pixel.h" />
     <ClInclude Include="Serial.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -2,19 +2,21 @@
 #include <vector>
 
 #include "ArduinoSerial.h"
-
-using namespace std;
+#include "Pixel.h"
 
 int main()
 {
 	// RGB Led
-	vector<unsigned char> data;
-	data.push_back(255);
-	data.push_back(255);
-	data.push_back(255);
+	std::vector<Pixel> data;
+
+	data.push_back(Pixel({ 3, 4, 255 }));
+	data.push_back(Pixel({ 1, 255, 2 }));
+	data.push_back(Pixel({ 3, 255, 255 }));
+	data.push_back(Pixel({ 255, 0, 2 }));
 
 	// Sending data to the Arduino
 	ArduinoSerial arduinoSerial;
+	Sleep(1000);
 	arduinoSerial.send(data);
 
 	system("pause");

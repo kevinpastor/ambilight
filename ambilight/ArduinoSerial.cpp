@@ -2,34 +2,41 @@
 
 ArduinoSerial::ArduinoSerial() : serial("\\\\.\\COM10")
 {
+	// This cleans all pixels from the Arduino
+	// 2^8 - 6 magic word for communication
+	this->send(std::vector<Pixel>(250));
 }
 
 ArduinoSerial::~ArduinoSerial()
 {
 }
 
-void ArduinoSerial::send(const std::vector<unsigned char> data)
+void ArduinoSerial::send(const std::vector<Pixel> data)
 {
-	if (serial.isConnected())
+	std::vector<unsigned char> outputBuffer;
+
+	// Magic word needed for Arduino communication
+	unsigned nbLed = data.size();
+	outputBuffer.push_back('A');
+	outputBuffer.push_back('d');
+	outputBuffer.push_back('a');
+	outputBuffer.push_back((nbLed - 1) >> 8);
+	outputBuffer.push_back((nbLed - 1) & 0xff);
+	outputBuffer.push_back(outputBuffer[3] ^ outputBuffer[4] ^ 0x55);
+
+	// Adding all RGB value to the output buffer
+	for (const Pixel& i : data)
 	{
-		unsigned nbLed = 1;
-		unsigned dataSize = data.size() + 6;
-		std::vector<unsigned char> outputBuffer(dataSize);
-
-		// Magic word needed for Arduino communication
-		outputBuffer.push_back('A');
-		outputBuffer.push_back('d');
-		outputBuffer.push_back('a');
-		outputBuffer.push_back((nbLed - 1) >> 8);
-		outputBuffer.push_back((nbLed - 1) & 0xff);
-		outputBuffer.push_back(outputBuffer[3] ^ outputBuffer[4] ^ 0x55);
-
-		outputBuffer.insert(outputBuffer.end(), std::begin(data), std::end(data));
-
-		serial.writeData((char *)outputBuffer.data(), outputBuffer.size());
+		outputBuffer.push_back(i.red);
+		outputBuffer.push_back(i.green);
+		outputBuffer.push_back(i.blue);
 	}
-	else
+
+	// Verifying Arduino communication status
+	if (!serial.isConnected())
 	{
 		throw std::runtime_error("Unable to communicate with the Arduino");
 	}
+
+	serial.writeData((char *)outputBuffer.data(), outputBuffer.size());
 }

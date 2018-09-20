@@ -32,5 +32,8 @@
     <ClInclude Include="ArduinoSerial.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Pixel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
