@@ -7,11 +7,11 @@ using namespace std;
 
 int main()
 {
-	//cout << "Hello World" << endl;
-
 	Serial * serialCom = new Serial("\\\\.\\COM10");
 	if (serialCom->isConnected())
 	{
+		cout << "Sending data to the Arduino" << endl;
+
 		unsigned nbLed = 1;
 		unsigned dataSize = nbLed * 3 + 6;
 		vector<unsigned char> data(dataSize);
@@ -31,6 +31,10 @@ int main()
 
 		// Sending data to the Arduino
 		serialCom->writeData((char *)data.data(), data.size());
+	}
+	else
+	{
+		cout << "Arduino communication error" << endl;
 	}
 
 	system("pause");
