@@ -1,5 +1,5 @@
-#ifndef SERIALCLASS_H
-#define SERIALCLASS_H
+#ifndef SERIAL_H
+#define SERIAL_H
 
 #define ARDUINO_WAIT_TIME 2000
 
@@ -9,16 +9,6 @@
 
 class Serial
 {
-private:
-	//Serial comm handler
-	HANDLE hSerial;
-	//Connection status
-	bool connected;
-	//Get various information about the connection
-	COMSTAT status;
-	//Keep track of last error
-	DWORD errors;
-
 public:
 	//Initialize Serial communication with the given COM port
 	Serial(const char *portName);
@@ -34,6 +24,16 @@ public:
 	bool writeData(const char *buffer, unsigned int nbChar);
 	//Check if we are actually connected
 	bool isConnected();
+
+private:
+	//Serial comm handler
+	HANDLE hSerial;
+	//Connection status
+	bool connected;
+	//Get various information about the connection
+	COMSTAT status;
+	//Keep track of last error
+	DWORD errors;
 
 };
 
