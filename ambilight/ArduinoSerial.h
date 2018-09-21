@@ -10,10 +10,11 @@
 class ArduinoSerial
 {
 public:
-	ArduinoSerial();
+	ArduinoSerial(const char * communicationPort);
 	~ArduinoSerial();
 
 	void send(const std::vector<Pixel> data);
+
 
 private:
 	Serial serial;

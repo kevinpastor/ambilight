@@ -1,6 +1,6 @@
 #include "ArduinoSerial.h"
 
-ArduinoSerial::ArduinoSerial() : serial("\\\\.\\COM10")
+ArduinoSerial::ArduinoSerial(const char * portName) : serial(portName)
 {
 	// This cleans all pixels from the Arduino
 	// 2^8 - 6 magic word for communication
