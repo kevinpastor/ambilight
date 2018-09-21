@@ -15,7 +15,6 @@ public:
 
 	void send(const std::vector<Pixel> data);
 
-
 private:
 	Serial serial;
 
