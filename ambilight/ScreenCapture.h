@@ -5,10 +5,13 @@
 #include <Wincodec.h>
 #include <d3d9.h>
 #pragma comment(lib, "d3d9.lib")
+#include <vector>
+
+#include "Pixel.h"
 
 namespace ScreenCapture
 {
-	void getScreenData(unsigned char * dest);
+	std::vector<Pixel> getScreenData();
 };
 
 #endif

@@ -1,6 +1,6 @@
 #include "ScreenCapture.h"
 
-void ScreenCapture::getScreenData(unsigned char * dest)
+std::vector<Pixel> ScreenCapture::getScreenData()
 {
 	HDC hScreen = GetDC(GetDesktopWindow());
 	int screenWidth = GetDeviceCaps(hScreen, HORZRES);
@@ -21,9 +21,16 @@ void ScreenCapture::getScreenData(unsigned char * dest)
 	bmi.biCompression = BI_RGB;
 	bmi.biSizeImage = 0;
 
-	GetDIBits(hdcMem, hBitmap, 0, screenHeight, dest, (BITMAPINFO*)&bmi, DIB_RGB_COLORS);
+	unsigned char * screenCaptureData = new unsigned char[screenWidth * screenHeight * 4]();
+	GetDIBits(hdcMem, hBitmap, 0, screenHeight, screenCaptureData, (BITMAPINFO*)&bmi, DIB_RGB_COLORS);
 
 	ReleaseDC(GetDesktopWindow(), hScreen);
 	DeleteDC(hdcMem);
 	DeleteObject(hBitmap);
+
+	unsigned screenCaptureSize = screenWidth * screenHeight * 4;
+	Pixel * test = (Pixel *)screenCaptureData;
+	std::vector<Pixel> screenCapture({ {1,2,3} });
+
+	return screenCapture;
 }
