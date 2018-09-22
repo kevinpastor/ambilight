@@ -1,9 +1,8 @@
 #include "ArduinoSerial.h"
 
-ArduinoSerial::ArduinoSerial(const char * portName) : serial(portName)
+ArduinoSerial::ArduinoSerial(const char * portName, const unsigned & nbLed) : serial(portName), nbLed(nbLed)
 {
-	// This cleans all pixels from the Arduino
-	this->send(std::vector<Pixel>(97));
+	this->clearPixels();
 }
 
 const void ArduinoSerial::send(const std::vector<Pixel> & data)
@@ -34,4 +33,9 @@ const void ArduinoSerial::send(const std::vector<Pixel> & data)
 	}
 
 	serial.writeData((char *)outputBuffer.data(), outputBuffer.size());
+}
+
+const void ArduinoSerial::clearPixels()
+{
+	this->send(std::vector<Pixel>(this->nbLed));
 }

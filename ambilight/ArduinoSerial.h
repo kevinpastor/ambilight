@@ -10,12 +10,15 @@
 class ArduinoSerial
 {
 public:
-	ArduinoSerial(const char * communicationPort);
+	ArduinoSerial(const char * communicationPort, const unsigned & nbLed);
 
 	const void send(const std::vector<Pixel> & data);
 
+	const void clearPixels();
+
 private:
 	Serial serial;
+	unsigned nbLed;
 
 };
 

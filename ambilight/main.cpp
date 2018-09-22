@@ -9,7 +9,8 @@ int main()
 {
 	// Arduino communication setup
 	char portName[] = "\\\\.\\COM10";
-	ArduinoSerial arduinoSerial(portName);
+	unsigned nbLed = 97;
+	ArduinoSerial arduinoSerial(portName, nbLed);
 
 	// RGB Led
 	std::vector<Pixel> data;
