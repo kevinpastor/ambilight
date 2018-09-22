@@ -12,17 +12,17 @@ std::vector<Pixel> ScreenCapture::getScreenData()
 	BitBlt(hdcMem, 0, 0, screenWidth, screenHeight, hScreen, 0, 0, SRCCOPY);
 	SelectObject(hdcMem, hOld);
 
-	BITMAPINFOHEADER bmi;
-	bmi.biSize = sizeof(BITMAPINFOHEADER);
-	bmi.biWidth = screenWidth;
-	bmi.biHeight = -screenHeight;
-	bmi.biPlanes = 1;
-	bmi.biBitCount = 24;
-	bmi.biCompression = BI_RGB;
-	bmi.biSizeImage = 0;
+	BITMAPINFOHEADER bmpInfoHeader;
+	bmpInfoHeader.biSize = sizeof(BITMAPINFOHEADER);
+	bmpInfoHeader.biWidth = screenWidth;
+	bmpInfoHeader.biHeight = -screenHeight;
+	bmpInfoHeader.biPlanes = 1;
+	bmpInfoHeader.biBitCount = 24;
+	bmpInfoHeader.biCompression = BI_RGB;
+	bmpInfoHeader.biSizeImage = 0;
 
 	std::vector<Pixel> screenCaptureData(screenWidth * screenHeight * 3);
-	GetDIBits(hdcMem, hBitmap, 0, screenHeight, &screenCaptureData[0], (BITMAPINFO*)&bmi, DIB_RGB_COLORS);
+	GetDIBits(hdcMem, hBitmap, 0, screenHeight, &screenCaptureData[0], (BITMAPINFO*)&bmpInfoHeader, DIB_RGB_COLORS);
 
 	ReleaseDC(GetDesktopWindow(), hScreen);
 	DeleteDC(hdcMem);

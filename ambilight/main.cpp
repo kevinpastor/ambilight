@@ -26,6 +26,7 @@ int main()
 	//	std::cout << data2[i].red << std::endl;
 	//}
 
+	std::cout << "Ended execution" << std::endl;
 	system("pause");
 	return 1;
 }
