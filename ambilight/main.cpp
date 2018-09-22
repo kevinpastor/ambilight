@@ -2,37 +2,37 @@
 #include <vector>
 #include <ctime>
 
-#include "ScreenCaptureParser.h"
+#include "PixelParser.h"
 #include "ArduinoSerial.h"
-#include "ScreenCapture.h"
 #include "Pixel.h"
 #include "Coordinates.h"
 
 int main()
 {
+	Coordinates coordinates[] = {
+		{ 1151, 1070 },
+		{ 1232, 1070 },
+		{ 1294, 1070 },
+		{ 1360, 1070 },
+		{ 1418, 1070 },
+		{ 1482, 1070 }
+	};
+
+	unsigned nbLed = sizeof(coordinates) / sizeof(Coordinates);
+
 	// Arduino communication setup
 	char portName[] = "\\\\.\\COM10";
-	unsigned nbLed = 97;
 	ArduinoSerial arduinoSerial(portName, nbLed);
-
-	Coordinates coordinates[] = {
-		{1151, 1070},
-		{1232, 1070},
-		{1294, 1070},
-		{1360, 1070},
-		{1418, 1070},
-		{1482, 1070}
-	};
 
 	// RGB Led
 	std::vector<Pixel> data(nbLed);
-	ScreenCaptureParser screenCaptureParser;
+	PixelParser screenCaptureParser;
 
 	std::cout << "Started!" << std::endl;
 	while (true)
 	{
 		screenCaptureParser.update();
-		for (unsigned i = 0; i < sizeof(coordinates) / sizeof(Coordinates); i++)
+		for (unsigned i = 0; i < nbLed; i++)
 		{
 			data[i] = screenCaptureParser.getPixel(coordinates[i].x, coordinates[i].y);
 		}

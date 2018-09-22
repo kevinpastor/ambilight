@@ -24,8 +24,8 @@ public:
 private:
 	const bool isValidPosition(const unsigned & x, const unsigned & y);
 	void setScreenSize();
-	HDC getHDC();
-	BITMAPINFOHEADER getBmpInfoHeader();
+	const HDC getHDC();
+	const BITMAPINFOHEADER getBmpInfoHeader();
 
 	unsigned char * screenCaptureData;
 	unsigned screenHeight;

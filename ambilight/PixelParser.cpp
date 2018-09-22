@@ -1,20 +1,20 @@
-#include "ScreenCaptureParser.h"
+#include "PixelParser.h"
 
-ScreenCaptureParser::ScreenCaptureParser()
+PixelParser::PixelParser()
 {
 }
 
-void ScreenCaptureParser::update()
+void PixelParser::update()
 {
 	this->screenCapturer.capture();
 }
 
-const std::vector<Pixel> ScreenCaptureParser::getPixels()
+const std::vector<Pixel> PixelParser::getPixels()
 {
 	return std::vector<Pixel>();
 }
 
-const Pixel ScreenCaptureParser::averagePixels(const std::vector<Pixel>& pixels)
+const Pixel PixelParser::averagePixels(const std::vector<Pixel>& pixels)
 {
 	unsigned
 		red = 0,
@@ -35,12 +35,12 @@ const Pixel ScreenCaptureParser::averagePixels(const std::vector<Pixel>& pixels)
 	return Pixel({ (unsigned char)red, (unsigned char)green, (unsigned char)blue });
 }
 
-const std::vector<Pixel> ScreenCaptureParser::getSurroundingPixels(const unsigned & x, const unsigned & y)
+const std::vector<Pixel> PixelParser::getSurroundingPixels(const unsigned & x, const unsigned & y)
 {
 	return std::vector<Pixel>();
 }
 
-const Pixel ScreenCaptureParser::getPixel(const unsigned & x, const unsigned & y)
+const Pixel PixelParser::getPixel(const unsigned & x, const unsigned & y)
 {
 	return this->screenCapturer.getPixel(x, y);;
 }

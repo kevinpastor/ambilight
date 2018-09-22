@@ -1,7 +1,6 @@
 #ifndef ARDUINO_SERIAL_H
 #define ARDUINO_SERIAL_H
 
-#include <iostream>
 #include <vector>
 
 #include "Pixel.h"

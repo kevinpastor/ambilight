@@ -23,7 +23,7 @@ void ScreenCapture::capture()
 
 	BITMAPINFOHEADER bmpInfoHeader(this->getBmpInfoHeader());
 
-	GetDIBits(hdcMem, hBitmap, 0, this->screenHeight, this->screenCaptureData, (BITMAPINFO*)&bmpInfoHeader, DIB_RGB_COLORS);
+	GetDIBits(hdcMem, hBitmap, 0, this->screenHeight, this->screenCaptureData, (BITMAPINFO *)&bmpInfoHeader, DIB_RGB_COLORS);
 
 	ReleaseDC(GetDesktopWindow(), hScreen);
 	DeleteDC(hdcMem);
@@ -69,12 +69,12 @@ void ScreenCapture::setScreenSize()
 	this->screenHeight = GetDeviceCaps(hScreen, VERTRES);
 }
 
-HDC ScreenCapture::getHDC()
+const HDC ScreenCapture::getHDC()
 {
 	return GetDC(GetDesktopWindow());
 }
 
-BITMAPINFOHEADER ScreenCapture::getBmpInfoHeader()
+const BITMAPINFOHEADER ScreenCapture::getBmpInfoHeader()
 {
 	BITMAPINFOHEADER bmpInfoHeader;
 	bmpInfoHeader.biSize = sizeof(BITMAPINFOHEADER);

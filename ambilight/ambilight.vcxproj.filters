@@ -27,7 +27,7 @@
     <ClCompile Include="Serial.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ScreenCaptureParser.cpp">
+    <ClCompile Include="PixelParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,10 +44,10 @@
     <ClInclude Include="ScreenCapture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ScreenCaptureParser.h">
+    <ClInclude Include="Coordinates.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Coordinates.h">
+    <ClInclude Include="PixelParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
