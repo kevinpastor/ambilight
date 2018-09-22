@@ -1,7 +1,17 @@
 #include "ScreenCaptureParser.h"
 
-ScreenCaptureParser::ScreenCaptureParser(const std::vector<Pixel> screenCapture) : screenCapture(screenCapture)
+ScreenCaptureParser::ScreenCaptureParser()
 {
+}
+
+void ScreenCaptureParser::update()
+{
+	this->screenCapturer.capture();
+}
+
+const std::vector<Pixel> ScreenCaptureParser::getPixels()
+{
+	return std::vector<Pixel>();
 }
 
 const Pixel ScreenCaptureParser::averagePixels(const std::vector<Pixel>& pixels)
@@ -32,6 +42,5 @@ const std::vector<Pixel> ScreenCaptureParser::getSurroundingPixels(const unsigne
 
 const Pixel ScreenCaptureParser::getPixel(const unsigned & x, const unsigned & y)
 {
-	// top left origin
-	return this->screenCapture[x + y * 1920];
+	return this->screenCapturer.getPixel(x, y);;
 }

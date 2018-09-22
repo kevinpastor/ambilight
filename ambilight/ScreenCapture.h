@@ -10,9 +10,27 @@
 
 #include "Pixel.h"
 
-namespace ScreenCapture
+class ScreenCapture
 {
-	std::vector<Pixel> getScreenData();
+public:
+	ScreenCapture();
+	~ScreenCapture();
+
+	void capture();
+	const Pixel getPixel(const unsigned & x, const unsigned & y);
+	const unsigned getScreenHeight();
+	const unsigned getScreenWidth();
+
+private:
+	const bool isValidPosition(const unsigned & x, const unsigned & y);
+	void setScreenSize();
+	HDC getHDC();
+	BITMAPINFOHEADER getBmpInfoHeader();
+
+	unsigned char * screenCaptureData;
+	unsigned screenHeight;
+	unsigned screenWidth;
+
 };
 
 #endif

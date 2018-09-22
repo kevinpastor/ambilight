@@ -1,10 +1,12 @@
 #include <iostream>
 #include <vector>
+#include <ctime>
 
 #include "ScreenCaptureParser.h"
 #include "ArduinoSerial.h"
 #include "ScreenCapture.h"
 #include "Pixel.h"
+#include "Coordinates.h"
 
 int main()
 {
@@ -13,26 +15,34 @@ int main()
 	unsigned nbLed = 97;
 	ArduinoSerial arduinoSerial(portName, nbLed);
 
+	Coordinates coordinates[] = {
+		{1151, 1070},
+		{1232, 1070},
+		{1294, 1070},
+		{1360, 1070},
+		{1418, 1070},
+		{1482, 1070}
+	};
+
 	// RGB Led
-	std::vector<Pixel> data;
-	data.push_back(Pixel({ 255,255,255 }));
-	//std::cout << (unsigned)data[0].red << ", " << (unsigned)data[0].green << ", " << (unsigned)data[0].blue << std::endl;
+	std::vector<Pixel> data(nbLed);
+	ScreenCaptureParser screenCaptureParser;
 
-	// Sending data to the Arduino
-	arduinoSerial.send(data);
-
-	system("pause");
-	// Test
+	std::cout << "Started!" << std::endl;
 	while (true)
 	{
-		std::vector<Pixel> data2 = ScreenCapture::getScreenData();
-
-		ScreenCaptureParser screenCaptureParser(data2);
-		data[0] = screenCaptureParser.getPixel(0, 0);
+		screenCaptureParser.update();
+		for (unsigned i = 0; i < sizeof(coordinates) / sizeof(Coordinates); i++)
+		{
+			data[i] = screenCaptureParser.getPixel(coordinates[i].x, coordinates[i].y);
+		}
+		
+		// Sending data to the Arduino
 		arduinoSerial.send(data);
+
+		//std::cout << (unsigned)data[0].red << ", " << (unsigned)data[0].green << ", " << (unsigned)data[0].blue << std::endl;
 	}
 
-	std::cout << "Ended execution" << std::endl;
 	system("pause");
 	return 1;
 }
