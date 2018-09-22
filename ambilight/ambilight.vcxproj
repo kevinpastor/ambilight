@@ -114,12 +114,14 @@
     <ClCompile Include="ArduinoSerial.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ScreenCapture.cpp" />
+    <ClCompile Include="ScreenCaptureParser.cpp" />
     <ClCompile Include="Serial.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArduinoSerial.h" />
     <ClInclude Include="Pixel.h" />
     <ClInclude Include="ScreenCapture.h" />
+    <ClInclude Include="ScreenCaptureParser.h" />
     <ClInclude Include="Serial.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

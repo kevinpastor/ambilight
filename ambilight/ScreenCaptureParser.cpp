@@ -22,7 +22,7 @@ const Pixel ScreenCaptureParser::averagePixels(const std::vector<Pixel>& pixels)
 	green /= pixels.size();
 	blue /= pixels.size();
 
-	return Pixel({ red, green, blue });
+	return Pixel({ (unsigned char)red, (unsigned char)green, (unsigned char)blue });
 }
 
 const std::vector<Pixel> ScreenCaptureParser::getSurroundingPixels(const unsigned & x, const unsigned & y)
