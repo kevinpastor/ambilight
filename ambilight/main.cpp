@@ -15,14 +15,15 @@ int main()
 	std::vector<Pixel> data;
 	data.push_back(Pixel({ 255,255,255 }));
 
-	//std::vector<Pixel> data = ScreenCapture::getScreenData();
-	//for (size_t i = 0; i < 100; i++)
-	//{
-	//	std::cout << ScreenCapture::getScreenData()[i].red << std::endl;
-	//}
-
 	// Sending data to the Arduino
 	arduinoSerial.send(data);
+
+	// Test
+	std::vector<Pixel> data2 = ScreenCapture::getScreenData();
+	for (size_t i = 0; i < 1; i++)
+	{
+		std::cout << data2[i].red << std::endl;
+	}
 
 	system("pause");
 	return 1;
