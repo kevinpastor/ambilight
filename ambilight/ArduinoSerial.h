@@ -13,7 +13,7 @@ public:
 	ArduinoSerial(const char * communicationPort);
 	~ArduinoSerial();
 
-	void send(const std::vector<Pixel> data);
+	const void send(const std::vector<Pixel> & data);
 
 private:
 	Serial serial;

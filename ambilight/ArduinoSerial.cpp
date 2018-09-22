@@ -3,15 +3,14 @@
 ArduinoSerial::ArduinoSerial(const char * portName) : serial(portName)
 {
 	// This cleans all pixels from the Arduino
-	// 2^8 - 6 magic word for communication
-	this->send(std::vector<Pixel>(250));
+	this->send(std::vector<Pixel>(97));
 }
 
 ArduinoSerial::~ArduinoSerial()
 {
 }
 
-void ArduinoSerial::send(const std::vector<Pixel> data)
+const void ArduinoSerial::send(const std::vector<Pixel> & data)
 {
 	std::vector<unsigned char> outputBuffer;
 

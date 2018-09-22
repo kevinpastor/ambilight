@@ -85,7 +85,7 @@ Serial::~Serial()
 	}
 }
 
-int Serial::readData(char *buffer, unsigned int nbChar)
+const int Serial::readData(char *buffer, unsigned int nbChar)
 {
 	//Number of bytes we'll have read
 	DWORD bytesRead;
@@ -123,7 +123,7 @@ int Serial::readData(char *buffer, unsigned int nbChar)
 }
 
 
-bool Serial::writeData(const char *buffer, unsigned int nbChar)
+const bool Serial::writeData(const char *buffer, unsigned int nbChar)
 {
 	DWORD bytesSend;
 
@@ -141,7 +141,7 @@ bool Serial::writeData(const char *buffer, unsigned int nbChar)
 	}
 }
 
-bool Serial::isConnected()
+const bool Serial::isConnected()
 {
 	//Simply return the connection status
 	return this->connected;

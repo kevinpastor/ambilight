@@ -19,11 +19,11 @@ int main()
 	arduinoSerial.send(data);
 
 	// Test
-	std::vector<Pixel> data2 = ScreenCapture::getScreenData();
-	for (size_t i = 0; i < 1; i++)
-	{
-		std::cout << data2[i].red << std::endl;
-	}
+	//std::vector<Pixel> data2 = ScreenCapture::getScreenData();
+	//for (size_t i = 0; i < 1; i++)
+	//{
+	//	std::cout << data2[i].red << std::endl;
+	//}
 
 	system("pause");
 	return 1;
