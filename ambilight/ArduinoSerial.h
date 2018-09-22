@@ -11,7 +11,6 @@ class ArduinoSerial
 {
 public:
 	ArduinoSerial(const char * communicationPort);
-	~ArduinoSerial();
 
 	const void send(const std::vector<Pixel> & data);
 

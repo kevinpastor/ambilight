@@ -6,10 +6,6 @@ ArduinoSerial::ArduinoSerial(const char * portName) : serial(portName)
 	this->send(std::vector<Pixel>(97));
 }
 
-ArduinoSerial::~ArduinoSerial()
-{
-}
-
 const void ArduinoSerial::send(const std::vector<Pixel> & data)
 {
 	std::vector<unsigned char> outputBuffer;
