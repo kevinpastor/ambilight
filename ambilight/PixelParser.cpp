@@ -1,6 +1,6 @@
 #include "PixelParser.h"
 
-PixelParser::PixelParser()
+PixelParser::PixelParser(std::vector<Coordinates> coordinates) : coordinates(coordinates)
 {
 }
 
@@ -11,36 +11,65 @@ void PixelParser::update()
 
 const std::vector<Pixel> PixelParser::getPixels()
 {
-	return std::vector<Pixel>();
-}
-
-const Pixel PixelParser::averagePixels(const std::vector<Pixel>& pixels)
-{
-	unsigned
-		red = 0,
-		green = 0,
-		blue = 0;
-
-	for (auto &pixel : pixels)
+	std::vector<Pixel> averagePixels;
+	for (auto &coordinate : this->coordinates)
 	{
-		red += pixel.red;
-		green += pixel.green;
-		blue += pixel.blue;
+		std::vector<Pixel> surroundingPixels = this->getSurroundingPixels(coordinate);
+		Pixel averagePixel = this->averagePixel(surroundingPixels);
+		averagePixels.push_back(averagePixel);
 	}
 
-	red /= pixels.size();
-	green /= pixels.size();
-	blue /= pixels.size();
-
-	return Pixel({ (unsigned char)red, (unsigned char)green, (unsigned char)blue });
+	return averagePixels;
 }
 
-const std::vector<Pixel> PixelParser::getSurroundingPixels(const unsigned & x, const unsigned & y)
+const Pixel PixelParser::averagePixel(const std::vector<Pixel> & pixels)
 {
-	return std::vector<Pixel>();
+	unsigned
+		totalRed = 0,
+		totalGreen = 0,
+		totalBlue = 0;
+
+	for (auto & pixel : pixels)
+	{
+		totalRed += pixel.red;
+		totalGreen += pixel.green;
+		totalBlue += pixel.blue;
+	}
+
+	unsigned char
+		averageRed = totalRed / pixels.size(),
+		averageGreen = totalGreen / pixels.size(),
+		averageBlue = totalBlue / pixels.size();
+
+	return Pixel({ averageRed, averageGreen, averageBlue });
 }
 
-const Pixel PixelParser::getPixel(const unsigned & x, const unsigned & y)
+const std::vector<Pixel> PixelParser::getSurroundingPixels(const Coordinates & coordinates)
 {
-	return this->screenCapturer.getPixel(x, y);;
+	std::vector<Pixel> surroundingPixels;
+	const int surroundingRadius = 40;
+	for (int i = -surroundingRadius / 2; i < surroundingRadius / 2; i++)
+	{
+		int x = coordinates.x + i;
+		if (x >= 0 && x < this->screenCapturer.getScreenWidth())
+		{
+			for (int j = -surroundingRadius / 2; j < surroundingRadius / 2; j++)
+			{
+				int y = coordinates.y + j;
+				if (y >= 0 && y < this->screenCapturer.getScreenHeight())
+				{
+					Coordinates coordinates = { x, y };
+					Pixel pixel = this->getPixel(coordinates);
+					surroundingPixels.push_back(pixel);
+				}
+			}
+		}
+	}
+
+	return surroundingPixels;
+}
+
+const Pixel PixelParser::getPixel(const Coordinates coordinates)
+{
+	return this->screenCapturer.getPixel(coordinates);
 }

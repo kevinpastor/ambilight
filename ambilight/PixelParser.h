@@ -5,22 +5,23 @@
 #include <iostream>
 
 #include "ScreenCapture.h"
+#include "Coordinates.h"
 #include "Pixel.h"
 
 class PixelParser
 {
 public:
-	PixelParser();
+	PixelParser(std::vector<Coordinates> coordinates);
 	void update();
-	const Pixel getPixel(const unsigned & x, const unsigned & y);
 	const std::vector<Pixel> getPixels();
 
 private:
-	const Pixel averagePixels(const std::vector<Pixel> & pixels);
-	const std::vector<Pixel> getSurroundingPixels(const unsigned & x, const unsigned & y);
+	const Pixel averagePixel(const std::vector<Pixel> & pixels);
+	const std::vector<Pixel> getSurroundingPixels(const Coordinates & coorditates);
+	const Pixel getPixel(const Coordinates coordinates);
 
 	ScreenCapture screenCapturer;
-
+	const std::vector<Coordinates> coordinates;
 };
 
 #endif

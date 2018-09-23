@@ -13,31 +13,31 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Communication">
+      <UniqueIdentifier>{d56fe29a-ac5d-4311-a55c-5091b397bed9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Communication">
+      <UniqueIdentifier>{95221311-0302-4cbd-a23e-014f363ffe00}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ArduinoSerial.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ScreenCapture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Serial.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PixelParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Serial.cpp">
+      <Filter>Source Files\Communication</Filter>
+    </ClCompile>
+    <ClCompile Include="ArduinoSerial.cpp">
+      <Filter>Source Files\Communication</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Serial.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ArduinoSerial.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Pixel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -49,6 +49,12 @@
     </ClInclude>
     <ClInclude Include="PixelParser.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Serial.h">
+      <Filter>Header Files\Communication</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoSerial.h">
+      <Filter>Header Files\Communication</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

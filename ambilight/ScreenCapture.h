@@ -8,6 +8,7 @@
 #include <vector>
 #include <iostream>
 
+#include "Coordinates.h"
 #include "Pixel.h"
 
 class ScreenCapture
@@ -17,12 +18,12 @@ public:
 	~ScreenCapture();
 
 	void capture();
-	const Pixel getPixel(const unsigned & x, const unsigned & y);
+	const Pixel getPixel(const Coordinates & coordinates);
 	const unsigned getScreenHeight();
 	const unsigned getScreenWidth();
 
 private:
-	const bool isValidPosition(const unsigned & x, const unsigned & y);
+	const bool isValidPosition(const Coordinates & coordinates);
 	void setScreenSize();
 	const HDC getHDC();
 	const BITMAPINFOHEADER getBmpInfoHeader();

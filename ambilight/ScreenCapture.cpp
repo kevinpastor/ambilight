@@ -30,26 +30,26 @@ void ScreenCapture::capture()
 	DeleteObject(hBitmap);
 }
 
-const Pixel ScreenCapture::getPixel(const unsigned & x, const unsigned & y)
+const Pixel ScreenCapture::getPixel(const Coordinates & coordinates)
 {
-	if (!this->isValidPosition(x, y)) {
+	if (!this->isValidPosition(coordinates)) {
 		throw std::invalid_argument("Out of bound coordinates");
 	}
 
 	// top left origin
 	Pixel pixel({
-		this->screenCaptureData[x * 3 + y * 3 * this->screenWidth + 2],
-		this->screenCaptureData[x * 3 + y * 3 * this->screenWidth + 1],
-		this->screenCaptureData[x * 3 + y * 3 * this->screenWidth],
+		this->screenCaptureData[coordinates.x * 3 + coordinates.y * 3 * this->screenWidth + 2],
+		this->screenCaptureData[coordinates.x * 3 + coordinates.y * 3 * this->screenWidth + 1],
+		this->screenCaptureData[coordinates.x * 3 + coordinates.y * 3 * this->screenWidth],
 	});
 
 	return pixel;
 }
 
-const bool ScreenCapture::isValidPosition(const unsigned & x, const unsigned & y)
+const bool ScreenCapture::isValidPosition(const Coordinates & coordinates)
 {
-	return x < this->screenWidth
-		&& y < this->screenHeight;
+	return coordinates.x < this->screenWidth
+		&& coordinates.y < this->screenHeight;
 }
 
 const unsigned ScreenCapture::getScreenHeight()
