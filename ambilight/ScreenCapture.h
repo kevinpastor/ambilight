@@ -21,6 +21,8 @@ public:
 	const Pixel getPixel(const Coordinates & coordinates);
 	const unsigned getScreenHeight();
 	const unsigned getScreenWidth();
+	const bool isValidXPosition(const unsigned & x);
+	const bool isValidYPosition(const unsigned & y);
 
 private:
 	const bool isValidPosition(const Coordinates & coordinates);

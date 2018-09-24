@@ -1,6 +1,6 @@
 #include "PixelParser.h"
 
-PixelParser::PixelParser(std::vector<Coordinates> coordinates) : coordinates(coordinates)
+PixelParser::PixelParser(std::vector<Coordinates> coordinates) : coordinates(coordinates), surroundingRadius(19)
 {
 }
 
@@ -24,6 +24,11 @@ const std::vector<Pixel> PixelParser::getPixels()
 
 const Pixel PixelParser::averagePixel(const std::vector<Pixel> & pixels)
 {
+	if (pixels.size() == 0)
+	{
+		return Pixel();
+	}
+
 	unsigned
 		totalRed = 0,
 		totalGreen = 0,
@@ -37,9 +42,9 @@ const Pixel PixelParser::averagePixel(const std::vector<Pixel> & pixels)
 	}
 
 	unsigned char
-		averageRed = totalRed / pixels.size(),
-		averageGreen = totalGreen / pixels.size(),
-		averageBlue = totalBlue / pixels.size();
+		averageRed = (unsigned char)(totalRed / pixels.size()),
+		averageGreen = (unsigned char)(totalGreen / pixels.size()),
+		averageBlue = (unsigned char)(totalBlue / pixels.size());
 
 	return Pixel({ averageRed, averageGreen, averageBlue });
 }
@@ -47,22 +52,21 @@ const Pixel PixelParser::averagePixel(const std::vector<Pixel> & pixels)
 const std::vector<Pixel> PixelParser::getSurroundingPixels(const Coordinates & coordinates)
 {
 	std::vector<Pixel> surroundingPixels;
-	const int surroundingRadius = 40;
-	for (int i = -surroundingRadius / 2; i < surroundingRadius / 2; i++)
+	for (int x = (coordinates.x - (this->surroundingRadius / 2)); x < (int)(coordinates.x + (this->surroundingRadius / 2)); x++)
 	{
-		int x = coordinates.x + i;
-		if (x >= 0 && x < this->screenCapturer.getScreenWidth())
+		if (!this->screenCapturer.isValidXPosition(x))
 		{
-			for (int j = -surroundingRadius / 2; j < surroundingRadius / 2; j++)
+			continue;
+		}
+		for (int y = (coordinates.y - (this->surroundingRadius / 2)); y < (int)(coordinates.y + (this->surroundingRadius / 2)); y++)
+		{
+			if (!this->screenCapturer.isValidYPosition(y))
 			{
-				int y = coordinates.y + j;
-				if (y >= 0 && y < this->screenCapturer.getScreenHeight())
-				{
-					Coordinates coordinates = { x, y };
-					Pixel pixel = this->getPixel(coordinates);
-					surroundingPixels.push_back(pixel);
-				}
+				continue;
 			}
+			Coordinates coordinates = { (unsigned)x, (unsigned)y };
+			Pixel pixel = this->getPixel(coordinates);
+			surroundingPixels.push_back(pixel);
 		}
 	}
 

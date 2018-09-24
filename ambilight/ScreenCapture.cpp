@@ -48,8 +48,8 @@ const Pixel ScreenCapture::getPixel(const Coordinates & coordinates)
 
 const bool ScreenCapture::isValidPosition(const Coordinates & coordinates)
 {
-	return coordinates.x < this->screenWidth
-		&& coordinates.y < this->screenHeight;
+	return this->isValidXPosition(coordinates.x)
+		&& this->isValidYPosition(coordinates.y);
 }
 
 const unsigned ScreenCapture::getScreenHeight()
@@ -60,6 +60,18 @@ const unsigned ScreenCapture::getScreenHeight()
 const unsigned ScreenCapture::getScreenWidth()
 {
 	return this->screenWidth;
+}
+
+const bool ScreenCapture::isValidXPosition(const unsigned & x)
+{
+	return x < (int)this->screenWidth
+		&& x >= 0;
+}
+
+const bool ScreenCapture::isValidYPosition(const unsigned & y)
+{
+	return y < (int)this->screenHeight
+		&& y >= 0;
 }
 
 void ScreenCapture::setScreenSize()

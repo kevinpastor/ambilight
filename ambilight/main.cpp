@@ -56,7 +56,9 @@ int main()
 	PixelParser screenCaptureParser(coordinates);
 
 	std::cout << "Started!" << std::endl;
-	while (true)
+	clock_t tStart = clock();
+	for (unsigned i = 0; i < 360; i++)
+	//while (true)
 	{
 		screenCaptureParser.update();
 		std::vector<Pixel> data = screenCaptureParser.getPixels();
@@ -64,6 +66,7 @@ int main()
 		// Sending data to the Arduino
 		arduinoSerial.send(data);
 	}
+	printf("Time taken: %.2fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
 
 	system("pause");
 	return 1;

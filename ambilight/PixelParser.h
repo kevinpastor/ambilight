@@ -22,6 +22,7 @@ private:
 
 	ScreenCapture screenCapturer;
 	const std::vector<Coordinates> coordinates;
+	const unsigned surroundingRadius;
 };
 
 #endif
