@@ -4,6 +4,10 @@ Ambilight::Ambilight(const std::string & communicationPort, const unsigned & nbL
 {
 }
 
+Ambilight::~Ambilight()
+{
+}
+
 const void Ambilight::start()
 {
 	this->isActive = true;

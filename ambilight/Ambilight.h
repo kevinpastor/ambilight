@@ -13,6 +13,7 @@ class Ambilight
 {
 public:
 	Ambilight(const std::string & communicationPort, const unsigned & nbLed, const std::vector<Coordinates> coordinates);
+	~Ambilight();
 
 	const void start();
 	const void pause();
