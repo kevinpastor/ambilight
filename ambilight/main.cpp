@@ -9,6 +9,7 @@
 #include "ArduinoSerial.h"
 #include "Pixel.h"
 #include "Coordinates.h"
+#include "Ambilight.h"
 
 //#define RELEASE(__p) {if(__p!=nullptr){__p->Release();__p=nullptr;}}
 //
@@ -145,30 +146,35 @@ int main()
 
 	// Arduino communication setup
 	char portName[] = "\\\\.\\COM10";
-	ArduinoSerial arduinoSerial(portName, nbLed);
+	//ArduinoSerial arduinoSerial(portName, nbLed);
 
-	// RGB Led
-	//std::vector<Pixel> data;// (nbLed);
-	PixelParser pixelParser(coordinates);
-	pixelParser.update();
-	std::vector<Pixel> previousPixels = pixelParser.getPixels();
-	std::vector<Pixel> data;
-	std::vector<Pixel> currentPixels;
+	Ambilight ambilight("\\\\.\\COM10", nbLed, coordinates);
 
 	std::cout << "Started!" << std::endl;
-	clock_t tStart = clock();
-	//for (unsigned i = 0; i < 360; i++)
-	while (true)
-	{
-		pixelParser.update();
-		currentPixels = pixelParser.getPixels();
-		data = pixelParser.fadePixels(currentPixels, previousPixels);
-		previousPixels = data;
+	ambilight.start();
 
-		// Sending data to the Arduino
-		arduinoSerial.send(data);
-	}
-	printf("Time taken: %.2fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
+	//// RGB Led
+	////std::vector<Pixel> data;// (nbLed);
+	//PixelParser pixelParser(coordinates);
+	//pixelParser.update();
+	//std::vector<Pixel> previousPixels = pixelParser.getPixels();
+	//std::vector<Pixel> data;
+	//std::vector<Pixel> currentPixels;
+
+	//std::cout << "Started!" << std::endl;
+	//clock_t tStart = clock();
+	////for (unsigned i = 0; i < 360; i++)
+	//while (true)
+	//{
+	//	pixelParser.update();
+	//	currentPixels = pixelParser.getPixels();
+	//	data = pixelParser.fadePixels(currentPixels, previousPixels);
+	//	previousPixels = data;
+
+	//	// Sending data to the Arduino
+	//	arduinoSerial.send(data);
+	//}
+	//printf("Time taken: %.2fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
 
 	system("pause");
 	return 1;

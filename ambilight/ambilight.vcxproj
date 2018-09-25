@@ -111,6 +111,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Ambilight.cpp" />
     <ClCompile Include="ArduinoSerial.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ScreenCapture.cpp" />
@@ -118,6 +119,7 @@
     <ClCompile Include="Serial.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Ambilight.h" />
     <ClInclude Include="ArduinoSerial.h" />
     <ClInclude Include="Coordinates.h" />
     <ClInclude Include="Pixel.h" />

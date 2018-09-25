@@ -36,6 +36,9 @@
     <ClCompile Include="ArduinoSerial.cpp">
       <Filter>Source Files\Communication</Filter>
     </ClCompile>
+    <ClCompile Include="Ambilight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pixel.h">
@@ -55,6 +58,9 @@
     </ClInclude>
     <ClInclude Include="ArduinoSerial.h">
       <Filter>Header Files\Communication</Filter>
+    </ClInclude>
+    <ClInclude Include="Ambilight.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

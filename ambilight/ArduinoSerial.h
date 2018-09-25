@@ -2,6 +2,7 @@
 #define ARDUINO_SERIAL_H
 
 #include <vector>
+#include <string>
 
 #include "Pixel.h"
 #include "Serial.h"
@@ -9,7 +10,7 @@
 class ArduinoSerial
 {
 public:
-	ArduinoSerial(const char * communicationPort, const unsigned & nbLed);
+	ArduinoSerial(const std::string communicationPort, const unsigned & nbLed);
 
 	const void send(const std::vector<Pixel> & data);
 

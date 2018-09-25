@@ -1,12 +1,17 @@
 #include "ArduinoSerial.h"
 
-ArduinoSerial::ArduinoSerial(const char * portName, const unsigned & nbLed) : serial(portName), nbLed(nbLed)
+ArduinoSerial::ArduinoSerial(const std::string portName, const unsigned & nbLed) : serial(portName.data()), nbLed(nbLed)
 {
 	this->clearPixels();
 }
 
 const void ArduinoSerial::send(const std::vector<Pixel> & data)
 {
+	if (!serial.isConnected())
+	{
+		throw std::runtime_error("Unable to send data");
+	}
+
 	std::vector<unsigned char> outputBuffer;
 
 	// Magic word needed for Arduino communication
