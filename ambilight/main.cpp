@@ -73,7 +73,7 @@ int main()
 	//HRESULT hr = Direct3D9TakeScreenshots(D3DADAPTER_DEFAULT);
 	//system("pause");
 
-	std::vector<Coordinates> coordinates = {
+	const std::vector<Coordinates> coordinates = {
 		{ 1151, 1079 }, // bottom right
 		{ 1232, 1079 },
 		{ 1294, 1079 },
@@ -149,9 +149,9 @@ int main()
 
 	// RGB Led
 	//std::vector<Pixel> data;// (nbLed);
-	PixelParser screenCaptureParser(coordinates);
-	screenCaptureParser.update();
-	std::vector<Pixel> previousPixels = screenCaptureParser.getPixels();
+	PixelParser pixelParser(coordinates);
+	pixelParser.update();
+	std::vector<Pixel> previousPixels = pixelParser.getPixels();
 	std::vector<Pixel> data;
 	std::vector<Pixel> currentPixels;
 
@@ -160,9 +160,9 @@ int main()
 	//for (unsigned i = 0; i < 360; i++)
 	while (true)
 	{
-		screenCaptureParser.update();
-		currentPixels = screenCaptureParser.getPixels();
-		data = screenCaptureParser.fadePixels(currentPixels, previousPixels);
+		pixelParser.update();
+		currentPixels = pixelParser.getPixels();
+		data = pixelParser.fadePixels(currentPixels, previousPixels);
 		previousPixels = data;
 
 		// Sending data to the Arduino
