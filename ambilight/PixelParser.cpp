@@ -1,6 +1,6 @@
 #include "PixelParser.h"
 
-PixelParser::PixelParser(std::vector<Coordinates> coordinates) : coordinates(coordinates), surroundingRadius(19)
+PixelParser::PixelParser(std::vector<Coordinates> coordinates) : coordinates(coordinates), surroundingRadius(19), smoothing(5)
 {
 }
 
@@ -20,6 +20,26 @@ const std::vector<Pixel> PixelParser::getPixels()
 	}
 
 	return averagePixels;
+}
+
+const std::vector<Pixel> PixelParser::fadePixels(const std::vector<Pixel> & currentPixels, const std::vector<Pixel> & previousPixels)
+{
+	if (currentPixels.size() != previousPixels.size())
+	{
+		throw std::invalid_argument("Vector of different size");
+	}
+
+	std::vector<Pixel> fadedPixel;
+
+	for (unsigned i = 0; i < currentPixels.size(); i++)
+	{
+		fadedPixel.push_back(Pixel({
+			(unsigned char)((previousPixels[i].red * (this->smoothing - 1) + currentPixels[i].red) / this->smoothing),
+			(unsigned char)((previousPixels[i].green * (this->smoothing - 1) + currentPixels[i].green) / this->smoothing),
+			(unsigned char)((previousPixels[i].blue * (this->smoothing - 1) + currentPixels[i].blue) / this->smoothing)
+		}));
+	}
+	return fadedPixel;
 }
 
 const Pixel PixelParser::averagePixel(const std::vector<Pixel> & pixels)
@@ -58,12 +78,14 @@ const std::vector<Pixel> PixelParser::getSurroundingPixels(const Coordinates & c
 		{
 			continue;
 		}
+
 		for (int y = (coordinates.y - (this->surroundingRadius / 2)); y < (int)(coordinates.y + (this->surroundingRadius / 2)); y++)
 		{
 			if (!this->screenCapturer.isValidYPosition(y))
 			{
 				continue;
 			}
+
 			Coordinates coordinates = { (unsigned)x, (unsigned)y };
 			Pixel pixel = this->getPixel(coordinates);
 			surroundingPixels.push_back(pixel);

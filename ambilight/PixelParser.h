@@ -14,6 +14,7 @@ public:
 	PixelParser(std::vector<Coordinates> coordinates);
 	void update();
 	const std::vector<Pixel> getPixels();
+	const std::vector<Pixel> fadePixels(const std::vector<Pixel> & currentPixels, const std::vector<Pixel> & previousPixels);
 
 private:
 	const Pixel averagePixel(const std::vector<Pixel> & pixels);
@@ -23,6 +24,8 @@ private:
 	ScreenCapture screenCapturer;
 	const std::vector<Coordinates> coordinates;
 	const unsigned surroundingRadius;
+	const unsigned smoothing;
+
 };
 
 #endif

@@ -1,14 +1,78 @@
 #include <iostream>
 #include <vector>
 #include <ctime>
+//#include <Wincodec.h>             // we use WIC for saving images
+//#include <d3d9.h>                 // DirectX 9 header
+//#pragma comment(lib, "d3d9.lib")  // link to DirectX 9 library
 
 #include "PixelParser.h"
 #include "ArduinoSerial.h"
 #include "Pixel.h"
 #include "Coordinates.h"
 
+//#define RELEASE(__p) {if(__p!=nullptr){__p->Release();__p=nullptr;}}
+//
+//HRESULT Direct3D9TakeScreenshots(UINT adapter)
+//{
+//	HRESULT hr = S_OK;
+//	IDirect3D9 *d3d = nullptr;
+//	IDirect3DDevice9 *device = nullptr;
+//	IDirect3DSurface9 *surface = nullptr;
+//	D3DPRESENT_PARAMETERS parameters = { 0 };
+//	D3DDISPLAYMODE mode;
+//	D3DLOCKED_RECT rc;
+//	UINT pitch;
+//	LPBYTE * shots = nullptr;
+//
+//	// init D3D and get screen size
+//	d3d = Direct3DCreate9(D3D_SDK_VERSION);
+//	d3d->GetAdapterDisplayMode(adapter, &mode);
+//
+//	parameters.Windowed = TRUE;
+//	parameters.BackBufferCount = 1;
+//	parameters.BackBufferHeight = mode.Height;
+//	parameters.BackBufferWidth = mode.Width;
+//	parameters.SwapEffect = D3DSWAPEFFECT_DISCARD;
+//	parameters.hDeviceWindow = NULL;
+//
+//	// create device & capture surface
+//	d3d->CreateDevice(adapter, D3DDEVTYPE_HAL, NULL, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &parameters, &device);
+//	device->CreateOffscreenPlainSurface(mode.Width, mode.Height, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &surface, nullptr);
+//
+//	// compute the required buffer size
+//	surface->LockRect(&rc, NULL, 0);
+//	pitch = rc.Pitch;
+//	surface->UnlockRect();
+//
+//	// allocate screenshots buffers
+//	shots = new LPBYTE[pitch * mode.Height];
+//
+//	// get the data
+//	device->GetFrontBufferData(0, surface);
+//
+//	// copy it into our buffers
+//	surface->LockRect(&rc, NULL, 0);
+//	CopyMemory(shots, rc.pBits, rc.Pitch * mode.Height);
+//	surface->UnlockRect();
+//
+//	std::cout << shots[0] << ", " << shots[1] << ", " << shots[2] << ", " << shots[3] << std::endl;
+//
+//cleanup:
+//	if (shots != nullptr)
+//	{
+//		delete [] shots;
+//	}
+//	RELEASE(surface);
+//	RELEASE(device);
+//	RELEASE(d3d);
+//	return hr;
+//}
+
 int main()
 {
+	//HRESULT hr = Direct3D9TakeScreenshots(D3DADAPTER_DEFAULT);
+	//system("pause");
+
 	std::vector<Coordinates> coordinates = {
 		{ 1151, 1079 }, // bottom right
 		{ 1232, 1079 },
@@ -54,14 +118,20 @@ int main()
 	// RGB Led
 	//std::vector<Pixel> data;// (nbLed);
 	PixelParser screenCaptureParser(coordinates);
+	screenCaptureParser.update();
+	std::vector<Pixel> previousPixels = screenCaptureParser.getPixels();
+	std::vector<Pixel> data;
+	std::vector<Pixel> currentPixels;
 
 	std::cout << "Started!" << std::endl;
 	clock_t tStart = clock();
-	for (unsigned i = 0; i < 360; i++)
-	//while (true)
+	//for (unsigned i = 0; i < 360; i++)
+	while (true)
 	{
 		screenCaptureParser.update();
-		std::vector<Pixel> data = screenCaptureParser.getPixels();
+		currentPixels = screenCaptureParser.getPixels();
+		data = screenCaptureParser.fadePixels(currentPixels, previousPixels);
+		previousPixels = data;
 
 		// Sending data to the Arduino
 		arduinoSerial.send(data);
