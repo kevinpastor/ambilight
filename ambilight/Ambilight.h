@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <thread>
 
 #include "ArduinoSerial.h"
 #include "PixelParser.h"
@@ -17,11 +18,17 @@ public:
 
 	const void start();
 	const void pause();
+	const void stop();
+
+	const void exec();
 
 private:
 	ArduinoSerial arduinoSerial;
 	PixelParser pixelParser;
 	bool isActive;
+	bool isStopped;
+
+	std::thread thread;
 
 };
 

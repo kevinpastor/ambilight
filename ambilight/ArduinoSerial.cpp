@@ -5,6 +5,11 @@ ArduinoSerial::ArduinoSerial(const std::string portName, const unsigned & nbLed)
 	this->clearPixels();
 }
 
+ArduinoSerial::~ArduinoSerial()
+{
+	this->clearPixels();
+}
+
 const void ArduinoSerial::send(const std::vector<Pixel> & data)
 {
 	if (!serial.isConnected())
