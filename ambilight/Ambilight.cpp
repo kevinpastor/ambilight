@@ -23,7 +23,7 @@ const void Ambilight::start()
 	}
 }
 
-const void Ambilight::stop()
+const void Ambilight::pause()
 {
-	return void();
+	this->isActive = false;
 }

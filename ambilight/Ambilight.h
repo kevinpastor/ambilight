@@ -15,7 +15,7 @@ public:
 	Ambilight(const std::string & communicationPort, const unsigned & nbLed, const std::vector<Coordinates> coordinates);
 
 	const void start();
-	const void stop();
+	const void pause();
 
 private:
 	ArduinoSerial arduinoSerial;
