@@ -1,6 +1,11 @@
 #include "Ambilight.h"
 
-Ambilight::Ambilight(const std::string & communicationPort, const unsigned & nbLed, const std::vector<Coordinates> coordinates) : arduinoSerial(communicationPort, nbLed), pixelParser(coordinates), isActive(false), isStopped(false), thread([this] { this->exec(); })
+Ambilight::Ambilight(const std::string & communicationPort, const unsigned & nbLed, const std::vector<Coordinates> coordinates)
+	: arduinoSerial(communicationPort, nbLed),
+	pixelParser(coordinates),
+	isPaused(true),
+	isStopped(false),
+	thread([this] { this->exec(); })
 {
 }
 
@@ -12,16 +17,17 @@ Ambilight::~Ambilight()
 
 const void Ambilight::start()
 {
-	this->isActive = true;
+	this->isPaused = false;
 }
 
 const void Ambilight::pause()
 {
-	this->isActive = false;
+	this->isPaused = true;
 }
 
 const void Ambilight::stop()
 {
+	this->pause();
 	this->isStopped = true;
 }
 
@@ -31,9 +37,10 @@ const void Ambilight::exec()
 	std::vector<Pixel> previousPixels = this->pixelParser.getPixels();
 	std::vector<Pixel> data;
 	std::vector<Pixel> currentPixels;
+
 	while (!this->isStopped)
 	{
-		while (this->isActive)
+		while (!this->isPaused)
 		{
 			this->pixelParser.update();
 			currentPixels = this->pixelParser.getPixels();

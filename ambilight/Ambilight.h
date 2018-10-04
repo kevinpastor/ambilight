@@ -18,17 +18,17 @@ public:
 
 	const void start();
 	const void pause();
-	const void stop();
-
-	const void exec();
 
 private:
 	ArduinoSerial arduinoSerial;
 	PixelParser pixelParser;
-	bool isActive;
+	bool isPaused;
 	bool isStopped;
 
 	std::thread thread;
+
+	const void exec();
+	const void stop();
 
 };
 
