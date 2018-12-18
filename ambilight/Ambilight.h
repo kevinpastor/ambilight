@@ -1,5 +1,4 @@
-#ifndef AMBILIGHT_H
-#define AMBILIGHT_H
+#pragma once
 
 #include <vector>
 #include <iostream>
@@ -31,5 +30,3 @@ private:
 	const void stop();
 
 };
-
-#endif

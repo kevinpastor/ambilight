@@ -6,8 +6,7 @@ Ambilight::Ambilight(const std::string & communicationPort, const unsigned & nbL
 	isPaused(true),
 	isStopped(false),
 	thread([this] { this->exec(); })
-{
-}
+{ }
 
 Ambilight::~Ambilight()
 {

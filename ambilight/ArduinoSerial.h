@@ -1,5 +1,4 @@
-#ifndef ARDUINO_SERIAL_H
-#define ARDUINO_SERIAL_H
+#pragma once
 
 #include <vector>
 #include <string>
@@ -22,5 +21,3 @@ private:
 	unsigned nbLed;
 
 };
-
-#endif
