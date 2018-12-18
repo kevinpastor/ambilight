@@ -1,5 +1,4 @@
-#ifndef PIXEL_PARSER_H
-#define PIXEL_PARSER_H
+#pragma once
 
 #include <vector>
 #include <iostream>
@@ -27,5 +26,3 @@ private:
 	const unsigned smoothing;
 
 };
-
-#endif
