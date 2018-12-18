@@ -1,10 +1,7 @@
-#ifndef COORDINATES_H
-#define COORDINATES_H
+#pragma once
 
 struct Coordinates {
 	unsigned
 		x = 0,
 		y = 0;
 };
-
-#endif

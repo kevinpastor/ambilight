@@ -1,5 +1,4 @@
-#ifndef PIXEL_H
-#define PIXEL_H
+#pragma once
 
 struct Pixel {
 	unsigned char
@@ -7,5 +6,3 @@ struct Pixel {
 		green = 0,
 		blue = 0;
 };
-
-#endif

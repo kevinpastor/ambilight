@@ -1,5 +1,4 @@
-#ifndef SCREEN_CAPTURE_H
-#define SCREEN_CAPTURE_H
+#pragma once
 
 #include <windows.h>
 #include <Wincodec.h>
@@ -35,5 +34,3 @@ private:
 	unsigned screenWidth;
 
 };
-
-#endif

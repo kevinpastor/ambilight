@@ -1,9 +1,9 @@
-#ifndef AMBILIGHT_H
-#define AMBILIGHT_H
+#pragma once
 
 #include <vector>
 #include <iostream>
 #include <string>
+#include <thread>
 
 #include "ArduinoSerial.h"
 #include "PixelParser.h"
@@ -21,8 +21,12 @@ public:
 private:
 	ArduinoSerial arduinoSerial;
 	PixelParser pixelParser;
-	bool isActive;
+	bool isPaused;
+	bool isStopped;
+
+	std::thread thread;
+
+	const void exec();
+	const void stop();
 
 };
-
-#endif

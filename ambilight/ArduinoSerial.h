@@ -1,5 +1,4 @@
-#ifndef ARDUINO_SERIAL_H
-#define ARDUINO_SERIAL_H
+#pragma once
 
 #include <vector>
 #include <string>
@@ -11,6 +10,7 @@ class ArduinoSerial
 {
 public:
 	ArduinoSerial(const std::string communicationPort, const unsigned & nbLed);
+	~ArduinoSerial();
 
 	const void send(const std::vector<Pixel> & data);
 
@@ -21,5 +21,3 @@ private:
 	unsigned nbLed;
 
 };
-
-#endif

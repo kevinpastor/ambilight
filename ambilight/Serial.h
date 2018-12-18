@@ -1,5 +1,4 @@
-#ifndef SERIAL_H
-#define SERIAL_H
+#pragma once
 
 #define ARDUINO_WAIT_TIME 2000
 
@@ -36,5 +35,3 @@ private:
 	DWORD errors;
 
 };
-
-#endif
