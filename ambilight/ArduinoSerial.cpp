@@ -20,7 +20,7 @@ const void ArduinoSerial::send(const std::vector<Pixel> & data)
 	std::vector<unsigned char> outputBuffer;
 
 	// Magic word needed for Arduino communication
-	unsigned nbLed = data.size();
+	unsigned nbLed = (unsigned)data.size();
 	outputBuffer.push_back('A');
 	outputBuffer.push_back('d');
 	outputBuffer.push_back('a');
@@ -42,7 +42,7 @@ const void ArduinoSerial::send(const std::vector<Pixel> & data)
 		throw std::runtime_error("Unable to communicate with the Arduino");
 	}
 
-	serial.writeData((char *)outputBuffer.data(), outputBuffer.size());
+	serial.writeData((char *)outputBuffer.data(), (unsigned)outputBuffer.size());
 }
 
 const void ArduinoSerial::clearPixels()
