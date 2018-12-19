@@ -1,11 +1,10 @@
 #pragma once
 
-#include <windows.h>
-#include <Wincodec.h>
-#include <d3d9.h>
-#pragma comment(lib, "d3d9.lib")
-#include <vector>
 #include <iostream>
+
+#include <windows.h>
+#include <vector>
+#include <stdexcept>
 
 #include "Coordinates.h"
 #include "Pixel.h"
@@ -17,17 +16,18 @@ public:
 	~ScreenCapture();
 
 	void capture();
-	const Pixel getPixel(const Coordinates & coordinates);
-	const unsigned getScreenHeight();
-	const unsigned getScreenWidth();
-	const bool isValidXPosition(const unsigned & x);
-	const bool isValidYPosition(const unsigned & y);
+	Pixel getPixel(const Coordinates & coordinates) const;
+
+	unsigned getScreenHeight() const;
+	unsigned getScreenWidth() const;
+	bool isValidXPosition(const unsigned & x) const;
+	bool isValidYPosition(const unsigned & y) const;
 
 private:
-	const bool isValidPosition(const Coordinates & coordinates);
+	bool isValidPosition(const Coordinates & coordinates) const;
 	void setScreenSize();
-	const HDC getHDC();
-	const BITMAPINFOHEADER getBmpInfoHeader();
+	HDC getHDC() const;
+	BITMAPINFOHEADER getBmpInfoHeader() const;
 
 	unsigned char * screenCaptureData;
 	unsigned screenHeight;

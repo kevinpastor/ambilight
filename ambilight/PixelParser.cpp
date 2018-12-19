@@ -1,18 +1,16 @@
 #include "PixelParser.h"
 
-PixelParser::PixelParser(std::vector<Coordinates> coordinates) : coordinates(coordinates), surroundingRadius(19), smoothing(5)
+PixelParser::PixelParser(ScreenCapture * screencapture, const std::vector<Coordinates> & coordinates)
+	: coordinates(coordinates),
+	surroundingRadius(19)
 {
+	this->screenCapture = screencapture;
 }
 
-void PixelParser::update()
-{
-	this->screenCapturer.capture();
-}
-
-const std::vector<Pixel> PixelParser::getPixels()
+std::vector<Pixel> PixelParser::getPixels() const
 {
 	std::vector<Pixel> averagePixels;
-	for (auto &coordinate : this->coordinates)
+	for (auto const & coordinate : this->coordinates)
 	{
 		std::vector<Pixel> surroundingPixels = this->getSurroundingPixels(coordinate);
 		Pixel averagePixel = this->averagePixel(surroundingPixels);
@@ -22,7 +20,7 @@ const std::vector<Pixel> PixelParser::getPixels()
 	return averagePixels;
 }
 
-const std::vector<Pixel> PixelParser::fadePixels(const std::vector<Pixel> & currentPixels, const std::vector<Pixel> & previousPixels)
+std::vector<Pixel> PixelParser::fadePixels(const std::vector<Pixel> & currentPixels, const std::vector<Pixel> & previousPixels, const unsigned & smoothing) const
 {
 	if (currentPixels.size() != previousPixels.size())
 	{
@@ -34,15 +32,16 @@ const std::vector<Pixel> PixelParser::fadePixels(const std::vector<Pixel> & curr
 	for (unsigned i = 0; i < currentPixels.size(); i++)
 	{
 		fadedPixel.push_back(Pixel({
-			(unsigned char)((previousPixels[i].red * (this->smoothing - 1) + currentPixels[i].red) / this->smoothing),
-			(unsigned char)((previousPixels[i].green * (this->smoothing - 1) + currentPixels[i].green) / this->smoothing),
-			(unsigned char)((previousPixels[i].blue * (this->smoothing - 1) + currentPixels[i].blue) / this->smoothing)
-		}));
+			(unsigned char)((previousPixels[i].red * (smoothing - 1) + currentPixels[i].red) / smoothing),
+			(unsigned char)((previousPixels[i].green * (smoothing - 1) + currentPixels[i].green) / smoothing),
+			(unsigned char)((previousPixels[i].blue * (smoothing - 1) + currentPixels[i].blue) / smoothing)
+			}));
 	}
+
 	return fadedPixel;
 }
 
-const Pixel PixelParser::averagePixel(const std::vector<Pixel> & pixels)
+Pixel PixelParser::averagePixel(const std::vector<Pixel> & pixels) const
 {
 	if (pixels.size() == 0)
 	{
@@ -69,19 +68,19 @@ const Pixel PixelParser::averagePixel(const std::vector<Pixel> & pixels)
 	return Pixel({ averageRed, averageGreen, averageBlue });
 }
 
-const std::vector<Pixel> PixelParser::getSurroundingPixels(const Coordinates & coordinates)
+std::vector<Pixel> PixelParser::getSurroundingPixels(const Coordinates & coordinates) const
 {
 	std::vector<Pixel> surroundingPixels;
 	for (int x = (coordinates.x - (this->surroundingRadius / 2)); x < (int)(coordinates.x + (this->surroundingRadius / 2)); x++)
 	{
-		if (!this->screenCapturer.isValidXPosition(x))
+		if (!this->screenCapture->isValidXPosition(x))
 		{
 			continue;
 		}
 
 		for (int y = (coordinates.y - (this->surroundingRadius / 2)); y < (int)(coordinates.y + (this->surroundingRadius / 2)); y++)
 		{
-			if (!this->screenCapturer.isValidYPosition(y))
+			if (!this->screenCapture->isValidYPosition(y))
 			{
 				continue;
 			}
@@ -95,7 +94,7 @@ const std::vector<Pixel> PixelParser::getSurroundingPixels(const Coordinates & c
 	return surroundingPixels;
 }
 
-const Pixel PixelParser::getPixel(const Coordinates coordinates)
+Pixel PixelParser::getPixel(const Coordinates & coordinates) const
 {
-	return this->screenCapturer.getPixel(coordinates);
+	return this->screenCapture->getPixel(coordinates);
 }

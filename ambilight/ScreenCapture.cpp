@@ -1,14 +1,19 @@
 #include "ScreenCapture.h"
 
-ScreenCapture::ScreenCapture() : screenHeight(0), screenWidth(0), screenCaptureData(NULL)
+ScreenCapture::ScreenCapture()
+	: screenHeight(0),
+	screenWidth(0),
+	screenCaptureData(NULL)
 {
 	this->setScreenSize();
-	this->screenCaptureData = new unsigned char[this->screenWidth * this->screenHeight * 3];
+	const unsigned size = this->screenWidth * this->screenHeight * 3;
+	this->screenCaptureData = new unsigned char[size];
+	std::memset(this->screenCaptureData, 0, size);
 }
 
 ScreenCapture::~ScreenCapture()
 {
-	delete [] this->screenCaptureData;
+	delete[ ] this->screenCaptureData;
 }
 
 void ScreenCapture::capture()
@@ -30,45 +35,44 @@ void ScreenCapture::capture()
 	DeleteObject(hBitmap);
 }
 
-const Pixel ScreenCapture::getPixel(const Coordinates & coordinates)
+Pixel ScreenCapture::getPixel(const Coordinates & coordinates) const
 {
-	if (!this->isValidPosition(coordinates)) {
+	if (!this->isValidPosition(coordinates))
+	{
 		throw std::invalid_argument("Out of bound coordinates");
 	}
 
 	// top left origin
-	Pixel pixel({
+	return Pixel({
 		this->screenCaptureData[coordinates.x * 3 + coordinates.y * 3 * this->screenWidth + 2],
 		this->screenCaptureData[coordinates.x * 3 + coordinates.y * 3 * this->screenWidth + 1],
-		this->screenCaptureData[coordinates.x * 3 + coordinates.y * 3 * this->screenWidth],
-	});
-
-	return pixel;
+		this->screenCaptureData[coordinates.x * 3 + coordinates.y * 3 * this->screenWidth]
+		});
 }
 
-const bool ScreenCapture::isValidPosition(const Coordinates & coordinates)
+bool ScreenCapture::isValidPosition(const Coordinates & coordinates) const
 {
 	return this->isValidXPosition(coordinates.x)
 		&& this->isValidYPosition(coordinates.y);
 }
 
-const unsigned ScreenCapture::getScreenHeight()
+unsigned ScreenCapture::getScreenHeight() const
 {
 	return this->screenHeight;
 }
 
-const unsigned ScreenCapture::getScreenWidth()
+unsigned ScreenCapture::getScreenWidth() const
 {
 	return this->screenWidth;
 }
 
-const bool ScreenCapture::isValidXPosition(const unsigned & x)
+bool ScreenCapture::isValidXPosition(const unsigned & x) const
 {
 	return x < (int)this->screenWidth
 		&& x >= 0;
 }
 
-const bool ScreenCapture::isValidYPosition(const unsigned & y)
+bool ScreenCapture::isValidYPosition(const unsigned & y) const
 {
 	return y < (int)this->screenHeight
 		&& y >= 0;
@@ -81,12 +85,12 @@ void ScreenCapture::setScreenSize()
 	this->screenHeight = GetDeviceCaps(hScreen, VERTRES);
 }
 
-const HDC ScreenCapture::getHDC()
+HDC ScreenCapture::getHDC() const
 {
 	return GetDC(GetDesktopWindow());
 }
 
-const BITMAPINFOHEADER ScreenCapture::getBmpInfoHeader()
+BITMAPINFOHEADER ScreenCapture::getBmpInfoHeader() const
 {
 	BITMAPINFOHEADER bmpInfoHeader;
 	bmpInfoHeader.biSize = sizeof(BITMAPINFOHEADER);
