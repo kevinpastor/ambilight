@@ -1,113 +1,131 @@
-#include <iostream>
-#include <vector>
-#include <ctime>
+#include <windows.h>
 
-#include "PixelParser.h"
-#include "ArduinoSerial.h"
-#include "Pixel.h"
-#include "Coordinates.h"
+#include <Wtsapi32.h>
+#include "resource.h"
+
 #include "Ambilight.h"
+#include "options.h"
 
-int main()
+#define ID_TRAY_APP_ICON 1001
+#define ID_TRAY_EXIT 1002
+#define WM_SYSICON (WM_USER + 1)
+
+HWND Hwnd;
+HMENU Hmenu;
+NOTIFYICONDATA notifyIconData;
+Ambilight ambilight(optionPortName, optionCoordinates);
+
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	const std::vector<Coordinates> coordinates = {
-		{ 1151, 1079 }, // bottom right
-		{ 1232, 1079 },
-		{ 1294, 1079 },
-		{ 1360, 1079 },
-		{ 1418, 1079 },
-		{ 1482, 1079 },
-		{ 1535, 1079 },
-		{ 1590, 1079 },
-		{ 1665, 1079 },
-		{ 1726, 1079 },
-		{ 1793, 1079 },
-		{ 1851, 1079 },
-		{ 1913, 1079 },
-		{ 1919, 1079 }, // bottom-right corner
-		{ 1919, 1073 }, // right
-		{ 1919, 1024 },
-		{ 1919, 966 },
-		{ 1919, 915 },
-		{ 1919, 836 },
-		{ 1919, 786 },
-		{ 1919, 725 },
-		{ 1919, 664 },
-		{ 1919, 597 },
-		{ 1919, 541 },
-		{ 1919, 476 },
-		{ 1919, 410 },
-		{ 1919, 354 },
-		{ 1919, 291 },
-		{ 1919, 230 },
-		{ 1919, 164 },
-		{ 1919, 102 },
-		{ 1919, 48 },
-		{ 1919, 0 }, // top-right corner
-		{ 1898, 0 }, // top row
-		{ 1834, 0 },
-		{ 1775, 0 },
-		{ 1712, 0 },
-		{ 1650, 0 },
-		{ 1590, 0 },
-		{ 1525, 0 },
-		{ 1467, 0 },
-		{ 1400, 0 },
-		{ 1339, 0 },
-		{ 1272, 0 },
-		{ 1214, 0 },
-		{ 1149, 0 },
-		{ 1086, 0 },
-		{ 1023, 0 },
-		{ 967, 0 },
-		{ 903, 0 },
-		{ 839, 0 },
-		{ 774, 0 },
-		{ 715, 0 },
-		{ 653, 0 },
-		{ 589, 0 },
-		{ 530, 0 },
-		{ 467, 0 },
-		{ 404, 0 },
-		{ 340, 0 },
-		{ 281, 0 },
-		{ 215, 0 },
-		{ 155, 0 },
-		{ 93, 0 },
-		{ 33, 0 },
-		{ 0, 0 }, // top-left corner
-		{ 0, 48 }, // left
-		{ 0, 102 },
-		{ 0, 164 },
-		{ 0, 230 },
-		{ 0, 291 },
-		{ 0, 354 },
-		{ 0, 410 },
-		{ 0, 476 },
-		{ 0, 541 },
-		{ 0, 597 },
-		{ 0, 664 },
-		{ 0, 725 },
-		{ 0, 786 },
-		{ 0, 836 },
-		{ 0, 915 },
-		{ 0, 966 },
-		{ 0, 1024 },
-		{ 0, 1073 },
-	};
+	switch (uMsg)
+	{
+	case WM_CREATE:
+		// Window is created
+		ShowWindow(Hwnd, SW_HIDE);
+		Hmenu = CreatePopupMenu();
+		AppendMenu(Hmenu, MF_STRING, ID_TRAY_EXIT, TEXT("Exit"));
+		break;
 
-	unsigned nbLed = coordinates.size();
-	std::string portName = "\\\\.\\COM10";
+	case WM_WTSSESSION_CHANGE:
+		switch (wParam)
+		{
+		case WTS_SESSION_UNLOCK:
+			// User unlocked session
+			ambilight.start();
+			break;
 
-	Ambilight ambilight(portName, nbLed, coordinates);
+		case WTS_SESSION_LOCK:
+			// User locked session
+			ambilight.pause();
+			break;
 
-	std::cout << "Started!" << std::endl;
-	//clock_t tStart = clock();
+		case WTS_SESSION_LOGOFF:
+			// User logged off
+			//ambilight.stop();
+			break;
+		}
+		break;
+
+	case WM_SYSICON:
+		// Taskbar icon is focused
+		if (lParam == WM_RBUTTONDOWN)
+		{
+			// Get current mouse position.
+			POINT curPoint;
+			GetCursorPos(&curPoint);
+			SetForegroundWindow(Hwnd);
+
+			// TrackPopupMenu blocks the app until TrackPopupMenu returns
+			UINT clicked = TrackPopupMenu(Hmenu, TPM_RETURNCMD | TPM_NONOTIFY, curPoint.x, curPoint.y, NULL, hwnd, NULL);
+
+			SendMessage(hwnd, WM_NULL, NULL, NULL); // Send benign message to window to make sure the menu goes away.
+			if (clicked == ID_TRAY_EXIT)
+			{
+				// Quit the application
+				Shell_NotifyIcon(NIM_DELETE, &notifyIconData);
+				PostQuitMessage(0);
+			}
+		}
+		break;
+
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		break;
+
+	}
+
+	return DefWindowProc(hwnd, uMsg, wParam, lParam);
+}
+
+int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+{
+	WNDCLASSEX wincl;
+	char appName[ ] = "Ambilight";
+
+	wincl.cbSize = sizeof(WNDCLASSEX);
+	wincl.style = NULL;
+	wincl.lpfnWndProc = WindowProc; // This function is called by windows
+	wincl.cbClsExtra = 0; // No extra bytes after the window class
+	wincl.cbWndExtra = 0; // structure or the window instance
+	wincl.hInstance = hInstance;
+	wincl.hIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(TASKBAR_ICON));
+	wincl.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wincl.hbrBackground = NULL;
+	wincl.lpszMenuName = NULL;
+	wincl.lpszClassName = appName;
+	wincl.hIconSm = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(TASKBAR_ICON));
+
+	// Register the window class, and if it fails quit the program
+	if (!RegisterClassEx(&wincl))
+	{
+		return 0;
+	}
+
+	Hwnd = CreateWindowEx(NULL, appName, appName, NULL, 0, 0, 0, 0, HWND_MESSAGE, NULL, NULL, NULL);
+
+	memset(&notifyIconData, 0, sizeof(NOTIFYICONDATA));
+	notifyIconData.cbSize = sizeof(NOTIFYICONDATA);
+	notifyIconData.hWnd = Hwnd;
+	notifyIconData.uID = ID_TRAY_APP_ICON;
+	notifyIconData.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+	notifyIconData.uCallbackMessage = WM_SYSICON;
+	notifyIconData.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(TASKBAR_ICON));
+	strncpy_s(notifyIconData.szTip, appName, sizeof(appName));
+
+	Shell_NotifyIcon(NIM_ADD, &notifyIconData);
+	WTSRegisterSessionNotification(Hwnd, NOTIFY_FOR_THIS_SESSION);
+
 	ambilight.start();
 
-	system("pause");
-	ambilight.pause();
+	MSG message;
+	while (GetMessage(&message, NULL, 0, 0))
+	{
+		TranslateMessage(&message);
+		DispatchMessage(&message);
+	}
 
-	//printf("Time taken: %.2fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
-	return 1;
+	WTSUnRegisterSessionNotification(Hwnd);
+
+	return (int)message.wParam;
 }
+

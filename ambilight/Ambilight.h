@@ -1,32 +1,29 @@
 #pragma once
 
-#include <vector>
-#include <iostream>
-#include <string>
 #include <thread>
+#include <vector>
 
 #include "ArduinoSerial.h"
-#include "PixelParser.h"
 #include "Coordinates.h"
+#include "PixelParser.h"
+#include "ScreenCapture.h"
 
 class Ambilight
 {
 public:
-	Ambilight(const std::string & communicationPort, const unsigned & nbLed, const std::vector<Coordinates> coordinates);
+	Ambilight(const std::string & communicationPort, const std::vector<Coordinates> & coordinates);
 	~Ambilight();
 
-	const void start();
-	const void pause();
+	void start();
+	void pause();
 
 private:
-	ArduinoSerial arduinoSerial;
-	PixelParser pixelParser;
 	bool isPaused;
 	bool isStopped;
 
 	std::thread thread;
 
-	const void exec();
-	const void stop();
+	void exec(const std::string & communicationPort, const std::vector<Coordinates> & coordinates) const;
+	void stop();
 
 };

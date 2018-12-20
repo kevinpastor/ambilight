@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <string>
 
 #include "Pixel.h"
 #include "Serial.h"
@@ -9,12 +8,12 @@
 class ArduinoSerial
 {
 public:
-	ArduinoSerial(const std::string communicationPort, const unsigned & nbLed);
+	ArduinoSerial(const std::string & communicationPort, const unsigned & nbLed);
 	~ArduinoSerial();
 
-	const void send(const std::vector<Pixel> & data);
+	void send(const std::vector<Pixel> & data) const;
 
-	const void clearPixels();
+	void clearPixels() const;
 
 private:
 	Serial serial;
