@@ -1,10 +1,8 @@
 #pragma once
 
-#include <iostream>
-
-#include <windows.h>
-#include <vector>
 #include <stdexcept>
+#include <vector>
+#include <windows.h>
 
 #include "Coordinates.h"
 #include "Pixel.h"

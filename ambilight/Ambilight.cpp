@@ -9,7 +9,7 @@ Ambilight::Ambilight(const std::string & communicationPort, const std::vector<Co
 Ambilight::~Ambilight()
 {
 	this->stop();
-	thread.join();
+	this->thread.join();
 }
 
 void Ambilight::start()
@@ -39,7 +39,7 @@ void Ambilight::exec(const std::string & communicationPort, const std::vector<Co
 	std::vector<Pixel> currentPixels;
 
 	unsigned smoothing = 5;
-
+	bool hasFaded = false;
 	while (!this->isStopped)
 	{
 		while (!this->isPaused)
@@ -52,16 +52,23 @@ void Ambilight::exec(const std::string & communicationPort, const std::vector<Co
 
 			// Sending data to the Arduino
 			arduinoSerial.send(data);
+			hasFaded = false;
+		}
+
+		if (!hasFaded)
+		{
+
+			std::fill(currentPixels.begin(), currentPixels.end(), Pixel({ 0, 0, 0 }));
+			for (unsigned i = 0; i < 10; ++i)
+			{
+				data = pixelParser.fadePixels(currentPixels, previousPixels, smoothing);
+				previousPixels = data;
+
+				// Sending data to the Arduino
+				arduinoSerial.send(data);
+			}
+			hasFaded = true;
 		}
 	}
 
-	std::fill(currentPixels.begin(), currentPixels.end(), Pixel({ 0, 0, 0 }));
-	for (unsigned i = 0; i < 10; ++i)
-	{
-		data = pixelParser.fadePixels(currentPixels, previousPixels, smoothing);
-		previousPixels = data;
-
-		// Sending data to the Arduino
-		arduinoSerial.send(data);
-	}
 }

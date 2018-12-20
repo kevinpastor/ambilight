@@ -1,12 +1,10 @@
 #pragma once
 
-#include <iostream>
-
 #include <vector>
 
-#include "ScreenCapture.h"
 #include "Coordinates.h"
 #include "Pixel.h"
+#include "ScreenCapture.h"
 
 class PixelParser
 {

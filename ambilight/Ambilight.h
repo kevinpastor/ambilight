@@ -1,14 +1,11 @@
 #pragma once
 
-#include <iostream>
-
-#include <vector>
-#include <string>
 #include <thread>
+#include <vector>
 
 #include "ArduinoSerial.h"
-#include "PixelParser.h"
 #include "Coordinates.h"
+#include "PixelParser.h"
 #include "ScreenCapture.h"
 
 class Ambilight
