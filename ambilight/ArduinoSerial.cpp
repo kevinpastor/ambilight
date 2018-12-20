@@ -18,6 +18,7 @@ void ArduinoSerial::send(const std::vector<Pixel> & data) const
 
 	// Magic word needed for Arduino communication
 	unsigned nbLed = (unsigned)data.size();
+
 	outputBuffer.push_back('A');
 	outputBuffer.push_back('d');
 	outputBuffer.push_back('a');

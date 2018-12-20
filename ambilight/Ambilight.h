@@ -14,7 +14,7 @@
 class Ambilight
 {
 public:
-	Ambilight(const std::string & communicationPort, const unsigned & nbLed, const std::vector<Coordinates> & coordinates);
+	Ambilight(const std::string & communicationPort, const std::vector<Coordinates> & coordinates);
 	~Ambilight();
 
 	void start();
@@ -26,7 +26,7 @@ private:
 
 	std::thread thread;
 
-	void exec(const std::string & communicationPort, const unsigned & nbLed, const std::vector<Coordinates> & coordinates) const;
+	void exec(const std::string & communicationPort, const std::vector<Coordinates> & coordinates) const;
 	void stop();
 
 };

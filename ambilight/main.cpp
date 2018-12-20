@@ -8,6 +8,7 @@
 #include "Pixel.h"
 #include "Coordinates.h"
 #include "Ambilight.h"
+#include "Serial.h"
 
 int main()
 {
@@ -97,10 +98,9 @@ int main()
 		{ 0, 1073 },
 	};
 
-	unsigned nbLed = coordinates.size();
 	std::string portName = "\\\\.\\COM10";
 
-	Ambilight ambilight(portName, nbLed, coordinates);
+	Ambilight ambilight(portName, coordinates);
 
 	std::cout << "Started!" << std::endl;
 	//clock_t tStart = clock();

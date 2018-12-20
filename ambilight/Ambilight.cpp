@@ -1,9 +1,9 @@
 #include "Ambilight.h"
 
-Ambilight::Ambilight(const std::string & communicationPort, const unsigned & nbLed, const std::vector<Coordinates> & coordinates)
+Ambilight::Ambilight(const std::string & communicationPort, const std::vector<Coordinates> & coordinates)
 	: isPaused(true),
 	isStopped(false),
-	thread(&Ambilight::exec, this, communicationPort, nbLed, coordinates)
+	thread(&Ambilight::exec, this, communicationPort, coordinates)
 { }
 
 Ambilight::~Ambilight()
@@ -28,11 +28,11 @@ void Ambilight::stop()
 	this->isStopped = true;
 }
 
-void Ambilight::exec(const std::string & communicationPort, const unsigned & nbLed, const std::vector<Coordinates> & coordinates) const
+void Ambilight::exec(const std::string & communicationPort, const std::vector<Coordinates> & coordinates) const
 {
 	ScreenCapture screenCapture = ScreenCapture();
 	PixelParser pixelParser = PixelParser(&screenCapture, coordinates);
-	ArduinoSerial arduinoSerial = ArduinoSerial(communicationPort, nbLed);
+	ArduinoSerial arduinoSerial = ArduinoSerial(communicationPort, (unsigned)coordinates.size());
 
 	std::vector<Pixel> previousPixels = pixelParser.getPixels();
 	std::vector<Pixel> data;
@@ -53,5 +53,15 @@ void Ambilight::exec(const std::string & communicationPort, const unsigned & nbL
 			// Sending data to the Arduino
 			arduinoSerial.send(data);
 		}
+	}
+
+	std::fill(currentPixels.begin(), currentPixels.end(), Pixel({ 0, 0, 0 }));
+	for (unsigned i = 0; i < 10; ++i)
+	{
+		data = pixelParser.fadePixels(currentPixels, previousPixels, smoothing);
+		previousPixels = data;
+
+		// Sending data to the Arduino
+		arduinoSerial.send(data);
 	}
 }
