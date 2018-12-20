@@ -56,10 +56,10 @@
     <ClInclude Include="Serial.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Options.h">
+    <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
+    <ClInclude Include="options.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

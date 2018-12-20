@@ -1,35 +1,10 @@
-//#include <iostream>
-//
-//#include <vector>
-//#include <ctime>
-//
-//#include "PixelParser.h"
-//#include "ArduinoSerial.h"
-//#include "Pixel.h"
-//#include "Coordinates.h"
-//#include "Ambilight.h"
-//#include "Serial.h"
-//
-//#include "Options.h"
-//
-//int main()
-//{
-//	Ambilight ambilight(portName, coordinates);
-//	ambilight.start();
-//
-//	system("pause");
-//	ambilight.pause();
-//
-//	return 1;
-//}
-
 #include <windows.h>
 
 #include <Wtsapi32.h>
 #include "resource.h"
 
 #include "Ambilight.h"
-#include "Options.h"
+#include "options.h"
 
 #define ID_TRAY_APP_ICON 1001
 #define ID_TRAY_EXIT 1002

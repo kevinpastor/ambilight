@@ -130,7 +130,7 @@
     <ClInclude Include="Ambilight.h" />
     <ClInclude Include="ArduinoSerial.h" />
     <ClInclude Include="Coordinates.h" />
-    <ClInclude Include="Options.h" />
+    <ClInclude Include="options.h" />
     <ClInclude Include="Pixel.h" />
     <ClInclude Include="PixelParser.h" />
     <ClInclude Include="resource.h" />
