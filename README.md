@@ -1,4 +1,4 @@
-# Ambilight
+# Ambilight Screen Grabber
 
 This project is a lightweight screengrabber that is required in order to make the Adalight Arduino project work. For each frame it captures, a color average is done for each pixel location and everything is parsed then sent to the Arduino board through serial port interface.
 
