@@ -1,9 +1,9 @@
 #include "Ambilight.h"
 
-Ambilight::Ambilight(const std::string & communicationPort, const std::vector<Coordinates> & coordinates)
+Ambilight::Ambilight(const Options & options)
 	: isPaused(true),
 	isStopped(false),
-	thread(&Ambilight::exec, this, communicationPort, coordinates)
+	thread(&Ambilight::exec, this, options)
 { }
 
 Ambilight::~Ambilight()
@@ -28,17 +28,16 @@ void Ambilight::stop()
 	this->isStopped = true;
 }
 
-void Ambilight::exec(const std::string & communicationPort, const std::vector<Coordinates> & coordinates) const
+void Ambilight::exec(const Options & options) const
 {
 	ScreenCapture screenCapture = ScreenCapture();
-	PixelParser pixelParser = PixelParser(&screenCapture, coordinates);
-	ArduinoSerial arduinoSerial = ArduinoSerial(communicationPort, (unsigned)coordinates.size());
+	PixelParser pixelParser = PixelParser(&screenCapture, options.getCoordinates());
+	ArduinoSerial arduinoSerial = ArduinoSerial(options.getPortName(), (unsigned)options.getCoordinates().size());
 
 	std::vector<Pixel> previousPixels = pixelParser.getPixels();
 	std::vector<Pixel> data;
 	std::vector<Pixel> currentPixels;
 
-	unsigned smoothing = 5;
 	bool hasFaded = false;
 	while (!this->isStopped)
 	{
@@ -47,7 +46,7 @@ void Ambilight::exec(const std::string & communicationPort, const std::vector<Co
 			// Sending data to the Arduino
 			screenCapture.capture();
 			currentPixels = pixelParser.getPixels();
-			data = pixelParser.fadePixels(currentPixels, previousPixels, smoothing);
+			data = pixelParser.fadePixels(currentPixels, previousPixels, options.getSmoothing());
 			previousPixels = data;
 
 			// Sending data to the Arduino
@@ -61,7 +60,7 @@ void Ambilight::exec(const std::string & communicationPort, const std::vector<Co
 			std::fill(currentPixels.begin(), currentPixels.end(), Pixel({ 0, 0, 0 }));
 			for (unsigned i = 0; i < 10; ++i)
 			{
-				data = pixelParser.fadePixels(currentPixels, previousPixels, smoothing);
+				data = pixelParser.fadePixels(currentPixels, previousPixels, options.getSmoothing());
 				previousPixels = data;
 
 				// Sending data to the Arduino

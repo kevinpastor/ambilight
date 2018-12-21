@@ -4,7 +4,7 @@
 #include "resource.h"
 
 #include "Ambilight.h"
-#include "options.h"
+#include "Options.h"
 
 #define ID_TRAY_APP_ICON 1001
 #define ID_TRAY_EXIT 1002
@@ -13,7 +13,8 @@
 HWND Hwnd;
 HMENU Hmenu;
 NOTIFYICONDATA notifyIconData;
-Ambilight ambilight(optionPortName, optionCoordinates);
+Options options;
+Ambilight ambilight(options);
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {

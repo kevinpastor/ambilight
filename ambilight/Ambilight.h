@@ -5,13 +5,14 @@
 
 #include "ArduinoSerial.h"
 #include "Coordinates.h"
+#include "options.h"
 #include "PixelParser.h"
 #include "ScreenCapture.h"
 
 class Ambilight
 {
 public:
-	Ambilight(const std::string & communicationPort, const std::vector<Coordinates> & coordinates);
+	Ambilight(const Options & options);
 	~Ambilight();
 
 	void start();
@@ -23,7 +24,7 @@ private:
 
 	std::thread thread;
 
-	void exec(const std::string & communicationPort, const std::vector<Coordinates> & coordinates) const;
+	void exec(const Options & options) const;
 	void stop();
 
 };
