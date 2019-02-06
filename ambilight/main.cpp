@@ -34,7 +34,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 		{
 		case WTS_SESSION_UNLOCK:
 			// User unlocked session
-			ambilight.start();
+			ambilight.resume();
 			break;
 
 		case WTS_SESSION_LOCK:
@@ -66,7 +66,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 			{
 			case ID_TRAY_EXIT:
 				// Quit the application
-				ambilight.stop();
 				Shell_NotifyIcon(NIM_DELETE, &notifyIconData);
 				PostQuitMessage(0);
 				break;
@@ -79,10 +78,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 		break;
 
 	case WM_DESTROY:
-		ambilight.stop();
 		PostQuitMessage(0);
 		break;
-
 	}
 
 	return DefWindowProc(hwnd, message, wParam, lParam);
@@ -126,13 +123,9 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	Shell_NotifyIcon(NIM_ADD, &notifyIconData);
 	WTSRegisterSessionNotification(hWnd, NOTIFY_FOR_THIS_SESSION);
 
-	ambilight.start();
-
 	MSG message;
 
-	std::cout << "ici" << std::endl;
-
-	while (!ambilight.isStoppeds())
+	while (true)
 	{
 		if (PeekMessage(&message, NULL, 0, 0, PM_NOREMOVE))
 		{
@@ -149,22 +142,12 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		}
 		else
 		{
-			//ambilight.exec();
+			ambilight.exec();
 		}
 	}
 	
-	//while (GetMessage(&message, NULL, 0, 0))
-	//{
-	//	TranslateMessage(&message);
-	//	DispatchMessage(&message);
-	//}
+	WTSUnRegisterSessionNotification(hWnd);
 
-	std::cout << "222" << std::endl;
-
-	// WTSUnRegisterSessionNotification(hWnd);
-
-	ambilight.stop();
-	
 	return (int)message.wParam;
 }
 

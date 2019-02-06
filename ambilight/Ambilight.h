@@ -15,17 +15,23 @@ public:
 	Ambilight(const Options & options);
 	~Ambilight();
 
-	void start();
+	void resume();
 	void pause();
 	void stop();
-	bool isStoppeds() const;
-	void exec(const Options & options) const;
+
+	void exec();
 
 private:
 	bool isPaused;
 	bool isStopped;
 
-	std::thread thread;
+	Options options;
+	ScreenCapture screenCapture;
+	PixelParser pixelParser;
+	ArduinoSerial arduinoSerial;
 
+	std::vector<Pixel> previousPixels;
+
+	void fadeOut();
 
 };
