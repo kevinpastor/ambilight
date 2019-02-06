@@ -142,7 +142,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 			ambilight.exec();
 		}
 	}
-	
+
 	WTSUnRegisterSessionNotification(hWnd);
 
 	return (int)message.wParam;

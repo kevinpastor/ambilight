@@ -47,7 +47,7 @@ void Ambilight::exec()
 	this->arduinoSerial.send(data);
 }
 
-void Ambilight::fadeOut() 
+void Ambilight::fadeOut()
 {
 	std::vector<Pixel> currentPixels(this->previousPixels.size(), { 0, 0, 0 });
 	for (unsigned i = 0; i < 10; ++i)
