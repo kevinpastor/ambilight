@@ -1,8 +1,5 @@
-#include <iostream>
-
 #include <windows.h>
 #include <Wtsapi32.h>
-#include <iostream>
 
 #include "resource.h"
 #include "Ambilight.h"
