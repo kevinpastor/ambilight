@@ -17,6 +17,9 @@ public:
 
 	void start();
 	void pause();
+	void stop();
+	bool isStoppeds() const;
+	void exec(const Options & options) const;
 
 private:
 	bool isPaused;
@@ -24,7 +27,5 @@ private:
 
 	std::thread thread;
 
-	void exec(const Options & options) const;
-	void stop();
 
 };

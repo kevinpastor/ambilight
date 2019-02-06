@@ -1,8 +1,10 @@
+#include <iostream>
+
 #include <windows.h>
-
 #include <Wtsapi32.h>
-#include "resource.h"
+#include <iostream>
 
+#include "resource.h"
 #include "Ambilight.h"
 #include "Options.h"
 
@@ -10,19 +12,19 @@
 #define ID_TRAY_EXIT 1002
 #define WM_SYSICON (WM_USER + 1)
 
-HWND Hwnd;
+HWND hWnd;
 HMENU Hmenu;
 NOTIFYICONDATA notifyIconData;
 Options options;
 Ambilight ambilight(options);
 
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	switch (uMsg)
+	switch (message)
 	{
 	case WM_CREATE:
 		// Window is created
-		ShowWindow(Hwnd, SW_HIDE);
+		ShowWindow(hWnd, SW_HIDE);
 		Hmenu = CreatePopupMenu();
 		AppendMenu(Hmenu, MF_STRING, ID_TRAY_EXIT, TEXT("Exit"));
 		break;
@@ -42,7 +44,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		case WTS_SESSION_LOGOFF:
 			// User logged off
-			//ambilight.stop();
+			ambilight.stop();
 			break;
 		}
 		break;
@@ -54,28 +56,36 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			// Get current mouse position.
 			POINT curPoint;
 			GetCursorPos(&curPoint);
-			SetForegroundWindow(Hwnd);
+			SetForegroundWindow(hWnd);
 
 			// TrackPopupMenu blocks the app until TrackPopupMenu returns
 			UINT clicked = TrackPopupMenu(Hmenu, TPM_RETURNCMD | TPM_NONOTIFY, curPoint.x, curPoint.y, NULL, hwnd, NULL);
 
 			SendMessage(hwnd, WM_NULL, NULL, NULL); // Send benign message to window to make sure the menu goes away.
-			if (clicked == ID_TRAY_EXIT)
+			switch (clicked)
 			{
+			case ID_TRAY_EXIT:
 				// Quit the application
+				ambilight.stop();
 				Shell_NotifyIcon(NIM_DELETE, &notifyIconData);
 				PostQuitMessage(0);
+				break;
 			}
 		}
 		break;
 
+	case WM_ENDSESSION:
+		ambilight.stop();
+		break;
+
 	case WM_DESTROY:
+		ambilight.stop();
 		PostQuitMessage(0);
 		break;
 
 	}
 
-	return DefWindowProc(hwnd, uMsg, wParam, lParam);
+	return DefWindowProc(hwnd, message, wParam, lParam);
 }
 
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -102,11 +112,11 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		return 0;
 	}
 
-	Hwnd = CreateWindowEx(NULL, appName, appName, NULL, 0, 0, 0, 0, HWND_MESSAGE, NULL, NULL, NULL);
+	hWnd = CreateWindowEx(NULL, appName, appName, NULL, 0, 0, 0, 0, HWND_MESSAGE, NULL, NULL, NULL);
 
 	memset(&notifyIconData, 0, sizeof(NOTIFYICONDATA));
 	notifyIconData.cbSize = sizeof(NOTIFYICONDATA);
-	notifyIconData.hWnd = Hwnd;
+	notifyIconData.hWnd = hWnd;
 	notifyIconData.uID = ID_TRAY_APP_ICON;
 	notifyIconData.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 	notifyIconData.uCallbackMessage = WM_SYSICON;
@@ -114,19 +124,47 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	strncpy_s(notifyIconData.szTip, appName, sizeof(appName));
 
 	Shell_NotifyIcon(NIM_ADD, &notifyIconData);
-	WTSRegisterSessionNotification(Hwnd, NOTIFY_FOR_THIS_SESSION);
+	WTSRegisterSessionNotification(hWnd, NOTIFY_FOR_THIS_SESSION);
 
 	ambilight.start();
 
 	MSG message;
-	while (GetMessage(&message, NULL, 0, 0))
+
+	std::cout << "ici" << std::endl;
+
+	while (!ambilight.isStoppeds())
 	{
-		TranslateMessage(&message);
-		DispatchMessage(&message);
+		if (PeekMessage(&message, NULL, 0, 0, PM_NOREMOVE))
+		{
+			if (GetMessage(&message, NULL, 0, 0))
+			{
+				TranslateMessage(&message);
+				DispatchMessage(&message);
+			}
+			else
+			{
+				ambilight.stop();
+				break;
+			}
+		}
+		else
+		{
+			//ambilight.exec();
+		}
 	}
+	
+	//while (GetMessage(&message, NULL, 0, 0))
+	//{
+	//	TranslateMessage(&message);
+	//	DispatchMessage(&message);
+	//}
 
-	WTSUnRegisterSessionNotification(Hwnd);
+	std::cout << "222" << std::endl;
 
+	// WTSUnRegisterSessionNotification(hWnd);
+
+	ambilight.stop();
+	
 	return (int)message.wParam;
 }
 

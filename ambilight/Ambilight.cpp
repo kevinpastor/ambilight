@@ -9,7 +9,6 @@ Ambilight::Ambilight(const Options & options)
 Ambilight::~Ambilight()
 {
 	this->stop();
-	this->thread.join();
 }
 
 void Ambilight::start()
@@ -26,6 +25,13 @@ void Ambilight::stop()
 {
 	this->pause();
 	this->isStopped = true;
+
+	this->thread.join();
+}
+
+bool Ambilight::isStoppeds() const
+{
+	return this->isStopped;
 }
 
 void Ambilight::exec(const Options & options) const

@@ -19,7 +19,7 @@ private:
 	std::vector<Pixel> getSurroundingPixels(const Coordinates & coorditates) const;
 	Pixel getPixel(const Coordinates & coordinates) const;
 
-	ScreenCapture * screenCapture;
+	const ScreenCapture * screenCapture;
 	const std::vector<Coordinates> coordinates;
 	const unsigned surroundingRadius;
 
