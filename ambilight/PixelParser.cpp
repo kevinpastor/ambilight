@@ -48,10 +48,9 @@ Pixel PixelParser::averagePixel(const std::vector<Pixel> & pixels) const
 		return Pixel();
 	}
 
-	unsigned
-		totalRed = 0,
-		totalGreen = 0,
-		totalBlue = 0;
+	unsigned totalRed = 0;
+	unsigned totalGreen = 0;
+	unsigned totalBlue = 0;
 
 	for (auto & pixel : pixels)
 	{
@@ -60,10 +59,9 @@ Pixel PixelParser::averagePixel(const std::vector<Pixel> & pixels) const
 		totalBlue += pixel.blue;
 	}
 
-	unsigned char
-		averageRed = (unsigned char)(totalRed / pixels.size()),
-		averageGreen = (unsigned char)(totalGreen / pixels.size()),
-		averageBlue = (unsigned char)(totalBlue / pixels.size());
+	unsigned char averageRed = (unsigned char)(totalRed / pixels.size());
+	unsigned char averageGreen = (unsigned char)(totalGreen / pixels.size());
+	unsigned char averageBlue = (unsigned char)(totalBlue / pixels.size());
 
 	return Pixel({ averageRed, averageGreen, averageBlue });
 }

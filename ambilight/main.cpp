@@ -12,8 +12,7 @@
 HWND hWnd;
 HMENU Hmenu;
 NOTIFYICONDATA notifyIconData;
-Options options;
-Ambilight ambilight(options);
+Ambilight * ambilight; // (&options, &screenCapture, &pixelParser, &arduinoSerial);
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -21,7 +20,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 	{
 	case WM_CREATE:
 		// Window is created
-		ShowWindow(hWnd, SW_HIDE);
+		ShowWindow(hwnd, SW_HIDE); // hWnd
 		Hmenu = CreatePopupMenu();
 		AppendMenu(Hmenu, MF_STRING, ID_TRAY_EXIT, TEXT("Exit"));
 		break;
@@ -31,17 +30,17 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 		{
 		case WTS_SESSION_UNLOCK:
 			// User unlocked session
-			ambilight.resume();
+			ambilight->resume();
 			break;
 
 		case WTS_SESSION_LOCK:
 			// User locked session
-			ambilight.pause();
+			ambilight->pause();
 			break;
 
 		case WTS_SESSION_LOGOFF:
 			// User logged off
-			ambilight.stop();
+			//ambilight->stop();
 			break;
 		}
 		break;
@@ -53,7 +52,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 			// Get current mouse position.
 			POINT curPoint;
 			GetCursorPos(&curPoint);
-			SetForegroundWindow(hWnd);
+			SetForegroundWindow(hwnd); // hWnd
 
 			// TrackPopupMenu blocks the app until TrackPopupMenu returns
 			UINT clicked = TrackPopupMenu(Hmenu, TPM_RETURNCMD | TPM_NONOTIFY, curPoint.x, curPoint.y, NULL, hwnd, NULL);
@@ -64,17 +63,21 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 			case ID_TRAY_EXIT:
 				// Quit the application
 				Shell_NotifyIcon(NIM_DELETE, &notifyIconData);
-				PostQuitMessage(0);
+				//PostQuitMessage(0);
+				PostMessage(hwnd, WM_CLOSE, NULL, NULL);
 				break;
 			}
 		}
 		break;
 
 	case WM_ENDSESSION:
-		ambilight.stop();
+		//ambilight->stop();
 		break;
 
 	case WM_DESTROY:
+		ambilight->stop();
+		ambilight->fadeOut();
+		delete ambilight;
 		PostQuitMessage(0);
 		break;
 	}
@@ -85,7 +88,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	WNDCLASSEX wincl;
-	char appName[ ] = "Ambilight";
+	char appName[] = "Ambilight";
 
 	wincl.cbSize = sizeof(WNDCLASSEX);
 	wincl.style = NULL;
@@ -122,6 +125,12 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 	MSG message;
 
+	Options options;
+	ScreenCapture screenCapture;
+	PixelParser pixelParser(&screenCapture, options.getCoordinates());
+	ArduinoSerial arduinoSerial(options.getPortName(), (unsigned)options.getCoordinates().size());
+	ambilight = new Ambilight(&options, &screenCapture, &pixelParser, &arduinoSerial);
+
 	while (true)
 	{
 		if (PeekMessage(&message, NULL, 0, 0, PM_NOREMOVE))
@@ -133,13 +142,13 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 			}
 			else
 			{
-				ambilight.stop();
+				ambilight->stop();
 				break;
 			}
 		}
 		else
 		{
-			ambilight.exec();
+			ambilight->exec();
 		}
 	}
 

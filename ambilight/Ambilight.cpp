@@ -1,13 +1,13 @@
 #include "Ambilight.h"
 
-Ambilight::Ambilight(const Options & options)
+Ambilight::Ambilight(Options * options, ScreenCapture * screenCapture, PixelParser * pixelParser, ArduinoSerial * arduinoSerial)
 	: isPaused(false),
 	isStopped(false),
 	options(options),
-	screenCapture(),
-	pixelParser(&(this->screenCapture), this->options.getCoordinates()),
-	arduinoSerial(this->options.getPortName(), (unsigned)this->options.getCoordinates().size()),
-	previousPixels(pixelParser.getPixels())
+	screenCapture(screenCapture),
+	pixelParser(pixelParser),
+	arduinoSerial(arduinoSerial),
+	previousPixels(this->options->getCoordinates().size()) // this->pixelParser->getPixels())
 { }
 
 Ambilight::~Ambilight()
@@ -22,7 +22,6 @@ void Ambilight::resume()
 
 void Ambilight::pause()
 {
-	this->fadeOut();
 	this->isPaused = true;
 }
 
@@ -39,21 +38,21 @@ void Ambilight::exec()
 		return;
 	}
 
-	this->screenCapture.capture();
-	std::vector<Pixel> currentPixels = this->pixelParser.getPixels();
-	std::vector<Pixel> data = this->pixelParser.fadePixels(currentPixels, previousPixels, this->options.getSmoothing());
+	this->screenCapture->capture();
+	std::vector<Pixel> currentPixels = this->pixelParser->getPixels();
+	std::vector<Pixel> data = this->pixelParser->fadePixels(currentPixels, previousPixels, this->options->getSmoothing());
 	this->previousPixels = data;
 
-	this->arduinoSerial.send(data);
+	this->arduinoSerial->send(data);
 }
 
 void Ambilight::fadeOut()
 {
-	std::vector<Pixel> currentPixels(this->previousPixels.size(), { 0, 0, 0 });
+	std::vector<Pixel> currentPixels(this->previousPixels.size()); // , { 0, 0, 0 });
 	for (unsigned i = 0; i < 10; ++i)
 	{
-		std::vector<Pixel> data = this->pixelParser.fadePixels(currentPixels, this->previousPixels, this->options.getSmoothing());
+		std::vector<Pixel> data = this->pixelParser->fadePixels(currentPixels, this->previousPixels, this->options->getSmoothing());
 		this->previousPixels = data;
-		this->arduinoSerial.send(data);
+		this->arduinoSerial->send(data);
 	}
 }

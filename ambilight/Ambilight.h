@@ -11,7 +11,7 @@
 class Ambilight
 {
 public:
-	Ambilight(const Options & options);
+	Ambilight(Options * options, ScreenCapture * screenCapture, PixelParser * pixelParser, ArduinoSerial * arduinoSerial);
 	~Ambilight();
 
 	void resume();
@@ -19,18 +19,17 @@ public:
 	void stop();
 
 	void exec();
+	void fadeOut();
 
 private:
 	bool isPaused;
 	bool isStopped;
 
-	Options options;
-	ScreenCapture screenCapture;
-	PixelParser pixelParser;
-	ArduinoSerial arduinoSerial;
+	Options * const options;
+	ScreenCapture * const screenCapture;
+	PixelParser * const pixelParser;
+	ArduinoSerial * const arduinoSerial;
 
 	std::vector<Pixel> previousPixels;
-
-	void fadeOut();
 
 };

@@ -13,7 +13,7 @@ ScreenCapture::ScreenCapture()
 
 ScreenCapture::~ScreenCapture()
 {
-	delete[ ] this->screenCaptureData;
+	delete[] this->screenCaptureData;
 }
 
 void ScreenCapture::capture()
@@ -68,13 +68,13 @@ unsigned ScreenCapture::getScreenWidth() const
 
 bool ScreenCapture::isValidXPosition(const unsigned & x) const
 {
-	return x < (int)this->screenWidth
+	return x < this->screenWidth // (int)width
 		&& x >= 0;
 }
 
 bool ScreenCapture::isValidYPosition(const unsigned & y) const
 {
-	return y < (int)this->screenHeight
+	return y < this->screenHeight // (int)height
 		&& y >= 0;
 }
 
