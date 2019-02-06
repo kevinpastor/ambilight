@@ -16,7 +16,7 @@ public:
 	void clearPixels() const;
 
 private:
-	Serial serial;
-	unsigned nbLed;
+	const Serial serial;
+	const unsigned nbLed;
 
 };

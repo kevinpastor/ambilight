@@ -122,6 +122,7 @@
     <ClCompile Include="Ambilight.cpp" />
     <ClCompile Include="ArduinoSerial.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Options.cpp" />
     <ClCompile Include="PixelParser.cpp" />
     <ClCompile Include="ScreenCapture.cpp" />
     <ClCompile Include="Serial.cpp" />
@@ -130,7 +131,7 @@
     <ClInclude Include="Ambilight.h" />
     <ClInclude Include="ArduinoSerial.h" />
     <ClInclude Include="Coordinates.h" />
-    <ClInclude Include="options.h" />
+    <ClInclude Include="Options.h" />
     <ClInclude Include="Pixel.h" />
     <ClInclude Include="PixelParser.h" />
     <ClInclude Include="resource.h" />
