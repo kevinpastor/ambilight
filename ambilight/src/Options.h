@@ -12,8 +12,6 @@ public:
 	Options();
 	Options(const std::string & optionPath);
 
-	void reload();
-
 	std::string getPortName() const;
 	std::vector<Coordinates> getCoordinates() const;
 	unsigned getSmoothing() const;

@@ -1,23 +1,16 @@
 #include "options.h"
 
 Options::Options()
-	: portName(), coordinates(), smoothing(1)
+	: portName(),
+	coordinates(),
+	smoothing(1),
+	path(".\\options.txt")
 {
-	char * buffer = nullptr;
-	size_t size = 0;
-	_dupenv_s(&buffer, &size, "APPDATA");
-	this->path = std::string(buffer);
-	this->path += "\\Ambilight\\options.txt";
 	this->importOptions();
 }
 
 Options::Options(const std::string & optionPath)
 	: path(optionPath)
-{
-	this->importOptions();
-}
-
-void Options::reload()
 {
 	this->importOptions();
 }
