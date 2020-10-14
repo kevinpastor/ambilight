@@ -2,25 +2,32 @@
 
 #include <vector>
 
+#include "Capture.h"
+#include "ColorGrader.h"
 #include "Coordinates.h"
+#include "MonitorUtility.h"
 #include "Pixel.h"
 #include "ScreenCapture.h"
-#include "Capture.h"
+#include "SessionUtility.h"
 
 class PixelParser
 {
 public:
 	PixelParser(const std::vector<Coordinates> & coordinates);
 
-	std::vector<Pixel> getPixels(const Capture & capture, const bool & isMonitorDimmed) const;
-	std::vector<Pixel> fadePixels(const std::vector<Pixel> & currentPixels, const std::vector<Pixel> & previousPixels, const unsigned & smoothing) const;
+	std::vector<Pixel> getPixels(const Capture & capture) const;
+
+	static std::vector<Pixel> mix(const std::vector<Pixel> & first, const std::vector<Pixel> & second, const float & weight);
+	static std::vector<Pixel> mix(const std::vector<Pixel> & first, const Pixel & second, const float & weight);
+	static Pixel mix(const Pixel & first, const Pixel & second, const float & weight);
 
 private:
-	Pixel averagePixel(const std::vector<Pixel> & pixels, const bool & isMonitorDimmed) const;
-	std::vector<Pixel> getSurroundingPixels(const Capture & capture, const Coordinates & coorditates) const;
-	Pixel colorCorrect(const Pixel & pixel, const bool & isMonitorDimmed) const;
+	static Pixel average(const std::vector<Pixel> & pixels);
+
+	static std::vector<Pixel> getSurrounding(const Capture & capture, const Coordinates & coorditates);
 
 	const std::vector<Coordinates> coordinates;
-	const unsigned surroundingRadius;
+
+	static const unsigned surroundingRadius = 19;
 
 };

@@ -1,19 +1,94 @@
 #include "Ambilight.h"
 
+//TODO Remove
+#include <chrono>
+#include <iostream>
+#include "MonitorUtility.h"
+
+const std::chrono::nanoseconds Ambilight::MAXIMUM_RERFRESH_RATE = std::chrono::nanoseconds(1000000000 / 20);
+const std::chrono::milliseconds Ambilight::PAUSED_REFRESH_RATE = std::chrono::milliseconds(500);
+
 Ambilight::Ambilight()
 	: isPaused(false),
-	isStopped(false),
-	options(),
-	screenCapture(),
 	pixelParser(this->options.getCoordinates()),
-	arduinoSerial(this->options.getPortName(), (unsigned)this->options.getCoordinates().size()),
-	previousPixels(this->options.getCoordinates().size()),
-	i(0)
-{ }
+	arduinoSerial(this->options.getPortName()),
+	previousPixels(this->options.getCoordinates().size())
+{
+}
 
 Ambilight::~Ambilight()
 {
-	this->stop();
+	this->pause();
+}
+
+void Ambilight::start()
+{
+	std::thread captureThread;
+	std::thread sendingThread;
+
+	//std::chrono::steady_clock::time_point lastUpdate;
+
+	while (true)
+	{
+		if (SessionUtility::isLocked())
+		{
+			if (!this->isPaused)
+			{
+				std::cout << "Locked" << std::endl;
+				this->pause();
+				this->fadeOut();
+			}
+		}
+		else
+		{
+			if (this->isPaused)
+			{
+				std::cout << "Unlocked" << std::endl;
+				this->resume();
+			}
+		}
+
+		if (this->isPaused)
+		{
+			if (captureThread.joinable())
+			{
+				captureThread.join();
+			}
+			if (sendingThread.joinable())
+			{
+				sendingThread.join();
+			}
+
+			std::this_thread::sleep_for(Ambilight::PAUSED_REFRESH_RATE);
+
+			continue;
+		}
+
+		//std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+		//if ((now - lastUpdate) < Ambilight::MAXIMUM_RERFRESH_RATE)
+		//{
+			//std::this_thread::sleep_for(Ambilight::MAXIMUM_RERFRESH_RATE - (now - lastUpdate));
+		//}
+
+		//std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
+		if (captureThread.joinable())
+		{
+			captureThread.join();
+		}
+		captureThread = this->capture();
+
+		if (sendingThread.joinable())
+		{
+			sendingThread.join();
+		}
+		sendingThread = this->send();
+
+		//std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+		//std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count() << "[ms]" << std::endl;
+		//std::cout << "Time between frames = " << std::chrono::duration_cast<std::chrono::milliseconds> (end - lastUpdate).count() << "[ms]" << std::endl;
+		//lastUpdate = end;
+	}
 }
 
 void Ambilight::resume()
@@ -26,99 +101,44 @@ void Ambilight::pause()
 	this->isPaused = true;
 }
 
-void Ambilight::stop()
+std::thread Ambilight::capture()
 {
-	this->pause();
-	this->isStopped = true;
+	return std::thread([this]()
+		{
+			std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+			const Capture capture = this->screenCapture.capture();
+			std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+			this->time += std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
+			//std::cout << "Capture time = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
+			const std::vector<Pixel> currentPixels = this->pixelParser.getPixels(capture);
+			const std::vector<Pixel> data = PixelParser::mix(currentPixels, this->previousPixels, this->options.getSmoothing());
+
+			this->mutex.lock();
+			this->previousPixels = data;
+			this->mutex.unlock();
+		});
 }
 
-void Ambilight::exec()
+std::thread Ambilight::send() const
 {
-	if (this->isPaused || this->isStopped)
-	{
-		return;
-	}
-
-	Capture capture = this->screenCapture.capture();
-	bool isMonitorDimmed = false;//this->isMonitorDimmed();
-	std::vector<Pixel> currentPixels = this->pixelParser.getPixels(capture, isMonitorDimmed);
-	std::vector<Pixel> data = this->pixelParser.fadePixels(currentPixels, this->previousPixels, this->options.getSmoothing());
-	this->previousPixels = data;
-
-	this->arduinoSerial.send(data);
+	return std::thread([this]()
+		{
+			this->mutex.lock();
+			this->arduinoSerial.send(this->previousPixels);
+			this->mutex.unlock();
+		});
 }
 
-// TODO Remove
 void Ambilight::fadeOut()
 {
-	std::vector<Pixel> currentPixels(this->previousPixels.size()); // , { 0, 0, 0 });
+	const Pixel black({ 0, 0, 0 });
 	for (unsigned i = 0; i < 10; ++i)
 	{
-		std::vector<Pixel> data = this->pixelParser.fadePixels(currentPixels, this->previousPixels, this->options.getSmoothing());
-		this->previousPixels = data;
+		const std::vector<Pixel> data = PixelParser::mix(this->previousPixels, black, this->options.getSmoothing());
 		this->arduinoSerial.send(data);
-	}
-}
-
-
-bool Ambilight::isMonitorDimmed() const
-{
-	return getMonitorBrightness() <= 5;
-}
-
-unsigned Ambilight::getMonitorBrightness() const
-{
-	HMONITOR hMonitor = NULL;
-	DWORD numberOfPhysicalMonitors;
-	LPPHYSICAL_MONITOR physicalMonitors = NULL;
-
-	HWND hWnd = GetDesktopWindow();
-
-	// Get the monitor handle.
-	hMonitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTOPRIMARY);
-
-	// Get the number of physical monitors.
-	BOOL success = GetNumberOfPhysicalMonitorsFromHMONITOR(hMonitor, &numberOfPhysicalMonitors);
-
-	if (success == FALSE)
-	{
-		return 100;
+		this->previousPixels = data;
 	}
 
-	// Allocate the array of PHYSICAL_MONITOR structures.
-	physicalMonitors = (LPPHYSICAL_MONITOR)malloc(numberOfPhysicalMonitors * sizeof(PHYSICAL_MONITOR));
-
-	if (physicalMonitors == NULL)
-	{
-		return 100;
-	}
-
-	// Get the array.
-	success = GetPhysicalMonitorsFromHMONITOR(hMonitor, numberOfPhysicalMonitors, physicalMonitors);
-
-	if (success == FALSE)
-	{
-		return 100;
-	}
-
-	// Get physical monitor handle.
-	HANDLE hPhysicalMonitor = physicalMonitors[0].hPhysicalMonitor;
-
-	DWORD pdwMinimumBrightness = 0;
-	DWORD pdwCurrentBrightness = 0;
-	DWORD pdwMaximumBrightness = 0;
-	success = GetMonitorBrightness(hPhysicalMonitor, &pdwMinimumBrightness, &pdwCurrentBrightness, &pdwMaximumBrightness);
-
-	if (success == FALSE)
-	{
-		return 100;
-	}
-
-	// Close the monitor handles.
-	DestroyPhysicalMonitors(numberOfPhysicalMonitors, physicalMonitors);
-
-	// Free the array.
-	free(physicalMonitors);
-
-	return pdwCurrentBrightness;
+	this->previousPixels = std::vector<Pixel>(this->options.getCoordinates().size());
+	this->arduinoSerial.send(this->previousPixels);
 }

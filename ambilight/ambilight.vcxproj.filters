@@ -36,7 +36,13 @@
     <ClInclude Include="src\Capture.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Command.h">
+    <ClInclude Include="src\ColorGrader.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SessionUtility.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MonitorUtility.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
@@ -63,6 +69,15 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\Capture.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ColorGrader.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SessionUtility.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MonitorUtility.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

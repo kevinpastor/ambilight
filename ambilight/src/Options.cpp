@@ -25,7 +25,7 @@ std::vector<Coordinates> Options::getCoordinates() const
 	return this->coordinates;
 }
 
-unsigned Options::getSmoothing() const
+float Options::getSmoothing() const
 {
 	return this->smoothing;
 }
@@ -56,12 +56,11 @@ void Options::importOptions()
 			{
 				throw std::runtime_error("Invalid options file format");
 			}
-			sscanf_s(line.substr(10).data(), "%d", &this->smoothing);
+			sscanf_s(line.substr(10).data(), "%f", &this->smoothing);
 		}
 		// Parsing Coordinates dynamic array
 		else if (strncmp(line.data(), "coordinates=[", 13) == 0)
 		{
-			this->coordinates = std::vector<Coordinates>();
 			while (std::getline(optionFile, line))
 			{
 				if (line[0] == ']')
@@ -69,9 +68,9 @@ void Options::importOptions()
 					break;
 				}
 
-				unsigned startPosition = (unsigned)line.find('{') + 1;
-				unsigned separatorPosition = (unsigned)line.find(',');
-				unsigned endPosition = (unsigned)line.find('}');
+				const unsigned startPosition = static_cast<unsigned>(line.find('{') + 1);
+				const unsigned separatorPosition = static_cast<unsigned>(line.find(','));
+				const unsigned endPosition = static_cast<unsigned>(line.find('}'));
 
 				if (startPosition == std::string::npos
 					|| separatorPosition == std::string::npos

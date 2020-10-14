@@ -14,14 +14,14 @@ public:
 
 	std::string getPortName() const;
 	std::vector<Coordinates> getCoordinates() const;
-	unsigned getSmoothing() const;
+	float getSmoothing() const;
 
 private:
 	std::string path;
 
 	std::string portName;
 	std::vector<Coordinates> coordinates;
-	unsigned smoothing;
+	float smoothing;
 
 	void importOptions();
 

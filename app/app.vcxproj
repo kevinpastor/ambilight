@@ -91,6 +91,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)build\outputs\debug\$(Platform)\</OutDir>
+    <IntDir>$(SolutionDir)build\intermediates\$(ProjectName)\debug\$(Platform)\</IntDir>
+    <TargetName>app</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>

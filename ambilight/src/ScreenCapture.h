@@ -5,24 +5,31 @@
 #include <vector>
 #include <windows.h>
 
+#include "Capture.h"
 #include "Coordinates.h"
 #include "Pixel.h"
-#include "Capture.h"
 
 class ScreenCapture
 {
 public:
 	ScreenCapture();
+	~ScreenCapture();
 
-	Capture capture();
+	Capture capture() const;
 
 private:
-	void setScreenSize();
-	HDC getHDC() const;
-	BITMAPINFOHEADER getBmpInfoHeader() const;
+	static HDC getHDC();
+	static HWND getHwnd();
+	static unsigned getWidth(const HDC & hScreen);
+	static unsigned getHeight(const HDC & hScreen);
+	static BITMAPINFO getBitmapInfo(const unsigned & width, const unsigned & height);
 
-	std::shared_ptr<unsigned char []> screenCaptureData;
-	unsigned screenHeight;
-	unsigned screenWidth;
+	const HDC hScreen;
+	const unsigned width;
+	const unsigned height;
+	const HDC hdcMem;
+	const HBITMAP hBitmap;
+	const HGDIOBJ hOld;
+	const BITMAPINFO bitmapInfo;
 
 };

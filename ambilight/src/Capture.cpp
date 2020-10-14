@@ -1,9 +1,9 @@
 #include "Capture.h"
 
-Capture::Capture(const std::shared_ptr<unsigned char[]> & buffer, const unsigned & height, const unsigned & width)
+Capture::Capture(const std::shared_ptr<std::vector<unsigned char>> & buffer, const unsigned & width, const unsigned & height)
 	: buffer(buffer),
-	height(height),
-	width(width)
+	width(width),
+	height(height)
 {
 }
 
@@ -15,9 +15,9 @@ Pixel Capture::getPixel(const Coordinates & coordinates) const
 	}
 
 	return Pixel({
-		this->buffer[coordinates.x * 3 + coordinates.y * 3 * this->width + 2],
-		this->buffer[coordinates.x * 3 + coordinates.y * 3 * this->width + 1],
-		this->buffer[coordinates.x * 3 + coordinates.y * 3 * this->width]
+		this->buffer.get()->operator[](coordinates.x * 3 + coordinates.y * 3 * this->width + 2),
+		this->buffer.get()->operator[](coordinates.x * 3 + coordinates.y * 3 * this->width + 1),
+		this->buffer.get()->operator[](coordinates.x * 3 + coordinates.y * 3 * this->width)
 		});
 }
 
