@@ -5,7 +5,7 @@ PixelParser::PixelParser(const std::vector<Coordinates> & coordinates)
 {
 }
 
-std::vector<Pixel> PixelParser::getPixels(const Capture & capture) const
+std::vector<Pixel> PixelParser::getPixels(const Capture & capture, const ColorGrader & colorGrader) const
 {
 	std::vector<Pixel> averages;
 	for (const Coordinates & region : this->coordinates)
@@ -16,7 +16,7 @@ std::vector<Pixel> PixelParser::getPixels(const Capture & capture) const
 	}
 
 	const unsigned monitorBrightness = MonitorUtility::getBrightness();
-	const ColorGrader colorGrader(monitorBrightness);
+	//const ColorGrader colorGrader(monitorBrightness);
 	const std::vector<Pixel> corrected = colorGrader.correct(averages);
 
 	return corrected;
@@ -96,6 +96,10 @@ Pixel PixelParser::average(const std::vector<Pixel> & pixels)
 
 std::vector<Pixel> PixelParser::getSurrounding(const Capture & capture, const Coordinates & region)
 {
+	if (region.x == -1 || region.y == -1) {
+		return std::vector<Pixel>(1, Pixel({ 0, 0, 0 }));
+	}
+
 	std::vector<Pixel> pixels;
 	for (int x = (region.x - (PixelParser::surroundingRadius / 2)); x < static_cast<int>(region.x + (PixelParser::surroundingRadius / 2)); ++x)
 	{
@@ -111,7 +115,7 @@ std::vector<Pixel> PixelParser::getSurrounding(const Capture & capture, const Co
 				continue;
 			}
 
-			const Coordinates coordinates = { static_cast<unsigned>(x), static_cast<unsigned>(y) };
+			const Coordinates coordinates = { x, y };
 			const Pixel pixel = capture.getPixel(coordinates);
 			pixels.push_back(pixel);
 		}

@@ -27,7 +27,7 @@ Serial::Serial(const std::string & portName)
 	dcb.Parity = NOPARITY;
 	dcb.fDtrControl = DTR_CONTROL_ENABLE;
 
-	if (!SetCommState(handle, &dcb))
+	if (!SetCommState(this->handle, &dcb))
 	{
 		throw std::runtime_error("Unable to set serial parameters");
 	}
@@ -45,9 +45,6 @@ void Serial::send(const char * buffer, const unsigned & size) const
 {
 	if (!WriteFile(this->handle, buffer, size, NULL, NULL))
 	{
-		DWORD errors;
-		COMSTAT comStat;
-		ClearCommError(this->handle, &errors, &comStat);
 		throw std::runtime_error("Unable to write on serial");
 	}
 }

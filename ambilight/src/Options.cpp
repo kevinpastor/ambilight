@@ -82,10 +82,10 @@ void Options::importOptions()
 				Coordinates coordinates;
 
 				std::string x = line.substr(startPosition, separatorPosition - startPosition);
-				sscanf_s(x.data(), "%d", &(coordinates.x));
+				sscanf_s(x.data(), "%i", &(coordinates.x));
 
 				std::string y = line.substr(separatorPosition + 1, endPosition - (separatorPosition + 1));
-				sscanf_s(y.data(), "%d", &(coordinates.y));
+				sscanf_s(y.data(), "%i", &(coordinates.y));
 
 				this->coordinates.push_back(coordinates);
 			}

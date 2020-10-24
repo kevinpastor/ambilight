@@ -127,13 +127,15 @@
     <ClInclude Include="src\Ambilight.h" />
     <ClInclude Include="src\ArduinoSerial.h" />
     <ClInclude Include="src\Capture.h" />
-    <ClInclude Include="src\ColorGrader.h" />
     <ClInclude Include="src\Coordinates.h" />
+    <ClInclude Include="src\LUT.h" />
     <ClInclude Include="src\MonitorUtility.h" />
+    <ClInclude Include="src\ColorGrader.h" />
     <ClInclude Include="src\Options.h" />
     <ClInclude Include="src\Pixel.h" />
     <ClInclude Include="src\PixelParser.h" />
     <ClInclude Include="src\resource.h" />
+    <ClInclude Include="src\RGBLUT.h" />
     <ClInclude Include="src\ScreenCapture.h" />
     <ClInclude Include="src\Serial.h" />
     <ClInclude Include="src\SessionUtility.h" />
@@ -142,16 +144,28 @@
     <ClCompile Include="src\Ambilight.cpp" />
     <ClCompile Include="src\ArduinoSerial.cpp" />
     <ClCompile Include="src\Capture.cpp" />
-    <ClCompile Include="src\ColorGrader.cpp" />
+    <ClCompile Include="src\LUT.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MonitorUtility.cpp" />
+    <ClCompile Include="src\ColorGrader.cpp" />
     <ClCompile Include="src\Options.cpp" />
     <ClCompile Include="src\PixelParser.cpp" />
+    <ClCompile Include="src\RGBLUT.cpp" />
     <ClCompile Include="src\ScreenCapture.cpp" />
     <ClCompile Include="src\Serial.cpp" />
     <ClCompile Include="src\SessionUtility.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\nlohmann.json.3.9.1\build\native\nlohmann.json.targets" Condition="Exists('..\packages\nlohmann.json.3.9.1\build\native\nlohmann.json.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\nlohmann.json.3.9.1\build\native\nlohmann.json.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\nlohmann.json.3.9.1\build\native\nlohmann.json.targets'))" />
+  </Target>
 </Project>

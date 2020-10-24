@@ -11,7 +11,7 @@ class ArduinoSerial
 public:
 	ArduinoSerial(const std::string & communicationPort);
 
-	void send(const std::vector<Pixel> & data) const;
+	void send(const std::vector<Pixel> & pixels) const;
 
 private:
 	const Serial serial;

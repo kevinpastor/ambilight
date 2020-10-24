@@ -1,11 +1,12 @@
 #pragma once
 
-#include <future>
 #include <mutex>
 #include <vector>
 
 #include "ArduinoSerial.h"
 #include "Coordinates.h"
+#include "MonitorUtility.h"
+#include "ColorGrader.h"
 #include "options.h"
 #include "PixelParser.h"
 #include "ScreenCapture.h"
@@ -32,15 +33,14 @@ private:
 	const ScreenCapture screenCapture;
 	const PixelParser pixelParser;
 	const ArduinoSerial arduinoSerial;
+	const ColorGrader colorGrader;
 
 	mutable std::mutex mutex;
 
-	unsigned long long time = 0;
 	bool isPaused;
 
-	std::vector<Pixel> previousPixels;
+	std::vector<Pixel> pixels;
 
-	static const std::chrono::nanoseconds MAXIMUM_RERFRESH_RATE;
 	static const std::chrono::milliseconds PAUSED_REFRESH_RATE;
 
 };

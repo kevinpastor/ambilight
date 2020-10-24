@@ -5,27 +5,27 @@ ArduinoSerial::ArduinoSerial(const std::string & portName)
 {
 }
 
-void ArduinoSerial::send(const std::vector<Pixel> & data) const
+void ArduinoSerial::send(const std::vector<Pixel> & pixels) const
 {
-	std::vector<unsigned char> outputBuffer;
+	std::vector<unsigned char> buffer;
 
 	// Magic word needed for Arduino communication
-	const unsigned nbLed = static_cast<unsigned>(data.size());
+	const unsigned nbLed = static_cast<unsigned>(pixels.size());
 
-	outputBuffer.push_back('A');
-	outputBuffer.push_back('d');
-	outputBuffer.push_back('a');
-	outputBuffer.push_back((nbLed - 1) >> 8);
-	outputBuffer.push_back((nbLed - 1) & 0xff);
-	outputBuffer.push_back(outputBuffer[3] ^ outputBuffer[4] ^ 0x55);
+	buffer.push_back('A');
+	buffer.push_back('d');
+	buffer.push_back('a');
+	buffer.push_back((nbLed - 1) >> 8);
+	buffer.push_back((nbLed - 1) & 0xff);
+	buffer.push_back(buffer[3] ^ buffer[4] ^ 0x55);
 
-	// Adding all RGB value to the output buffer
-	for (const Pixel & i : data)
+	// Adding all RGB value to the buffer
+	for (const Pixel & pixel : pixels)
 	{
-		outputBuffer.push_back(i.red);
-		outputBuffer.push_back(i.green);
-		outputBuffer.push_back(i.blue);
+		buffer.push_back(pixel.red);
+		buffer.push_back(pixel.green);
+		buffer.push_back(pixel.blue);
 	}
 
-	serial.send(reinterpret_cast<char *>(outputBuffer.data()), static_cast<unsigned>(outputBuffer.size()));
+	this->serial.send(reinterpret_cast<char *>(buffer.data()), static_cast<unsigned>(buffer.size()));
 }

@@ -1,6 +1,6 @@
 #pragma once
 
 struct Coordinates {
-	unsigned x = 0;
-	unsigned y = 0;
+	int x = 0;
+	int y = 0;
 };
