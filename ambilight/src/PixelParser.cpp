@@ -22,7 +22,7 @@ std::vector<Pixel> PixelParser::getPixels(const Capture & capture, const ColorGr
 	return corrected;
 }
 
-std::vector<Pixel> PixelParser::mix(const std::vector<Pixel> & first, const std::vector<Pixel> & second, const float & weight)
+std::vector<Pixel> PixelParser::mix(const std::vector<Pixel> & first, const std::vector<Pixel> & second, const double & weight)
 {
 	if (first.size() != second.size())
 	{
@@ -39,7 +39,7 @@ std::vector<Pixel> PixelParser::mix(const std::vector<Pixel> & first, const std:
 	return fadedPixels;
 }
 
-std::vector<Pixel> PixelParser::mix(const std::vector<Pixel> & first, const Pixel & second, const float & weight)
+std::vector<Pixel> PixelParser::mix(const std::vector<Pixel> & first, const Pixel & second, const double & weight)
 {
 	std::vector<Pixel> fadedPixels;
 	for (const Pixel & pixel : first)
@@ -51,7 +51,7 @@ std::vector<Pixel> PixelParser::mix(const std::vector<Pixel> & first, const Pixe
 	return fadedPixels;
 }
 
-Pixel PixelParser::mix(const Pixel & first, const Pixel & second, const float & weight)
+Pixel PixelParser::mix(const Pixel & first, const Pixel & second, const double & weight)
 {
 	if (weight < 0)
 	{

@@ -18,9 +18,9 @@ public:
 
 	std::vector<Pixel> getPixels(const Capture & capture, const ColorGrader & colorGrader) const;
 
-	static std::vector<Pixel> mix(const std::vector<Pixel> & first, const std::vector<Pixel> & second, const float & weight);
-	static std::vector<Pixel> mix(const std::vector<Pixel> & first, const Pixel & second, const float & weight);
-	static Pixel mix(const Pixel & first, const Pixel & second, const float & weight);
+	static std::vector<Pixel> mix(const std::vector<Pixel> & first, const std::vector<Pixel> & second, const double & weight);
+	static std::vector<Pixel> mix(const std::vector<Pixel> & first, const Pixel & second, const double & weight);
+	static Pixel mix(const Pixel & first, const Pixel & second, const double & weight);
 
 private:
 	static Pixel average(const std::vector<Pixel> & pixels);

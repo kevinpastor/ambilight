@@ -24,7 +24,7 @@ std::vector<Coordinates> Options::getCoordinates() const
 	return this->coordinates;
 }
 
-float Options::getSmoothing() const
+double Options::getSmoothing() const
 {
 	return this->smoothing;
 }
@@ -59,7 +59,7 @@ std::string Options::getPortName(const nlohmann::json & json)
 		throw std::runtime_error("Configuration $[\"portname\"] should be a string");
 	}
 
-	return json["portname"];
+	return json["portname"].get<std::string>();
 }
 
 std::vector<Coordinates> Options::getCoordinates(const nlohmann::json & json)
@@ -102,14 +102,14 @@ std::vector<Coordinates> Options::getCoordinates(const nlohmann::json & json)
 		}
 
 		coordinates.push_back({
-			coordinate["x"],
-			coordinate["y"],
+			coordinate["x"].get<int>(),
+			coordinate["y"].get<int>(),
 			});
 	}
 	return coordinates;
 }
 
-float Options::getSmoothing(const nlohmann::json & json)
+double Options::getSmoothing(const nlohmann::json & json)
 {
 	if (!json.contains("smoothing"))
 	{
@@ -118,10 +118,10 @@ float Options::getSmoothing(const nlohmann::json & json)
 
 	if (!json["smoothing"].is_number())
 	{
-		throw std::runtime_error("Configuration $[\"smoothing\"] should be a float");
+		throw std::runtime_error("Configuration $[\"smoothing\"] should be a double");
 	}
 
-	return json["smoothing"];
+	return json["smoothing"].get<double>();
 }
 
 ColorGrader Options::getColorGrader(const nlohmann::json & json)
@@ -182,7 +182,9 @@ LUT Options::getLut(const nlohmann::json & json)
 		throw std::runtime_error("Configuration $[\"luts\"][*][*][\"type\"] should be a string");
 	}
 
-	if (json["type"] != "oneDimensionBezierCurve")
+	const std::string type = json["type"].get<std::string>();
+
+	if (type != "oneDimensionBezierCurve")
 	{
 		throw std::runtime_error("Configuration $[\"luts\"][*][*][\"type\"] should have value \"oneDimensionBezierCurve\"");
 	}
@@ -212,10 +214,10 @@ OneDimensionBezierCurve Options::getOneDimensionBezierCurve(const nlohmann::json
 	{
 		if (!controlValue.is_number())
 		{
-			throw std::runtime_error("Configuration $[\"luts\"][*][?(@[\"type\"] == \"oneDimensionBezierCurve\")][\"controlValues\"][*] should be a number");
+			throw std::runtime_error("Configuration $[\"luts\"][*][?(@[\"type\"] == \"oneDimensionBezierCurve\")][\"controlValues\"][*] should be a double");
 		}
 
-		controlValues.push_back(controlValue);
+		controlValues.push_back(controlValue.get<double>());
 	}
 
 	return OneDimensionBezierCurve(controlValues);
