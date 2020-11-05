@@ -14,10 +14,12 @@ Pixel Capture::getPixel(const Coordinates & coordinates) const
 		throw std::invalid_argument("Out of bound coordinates");
 	}
 
+	const unsigned long long index = static_cast<unsigned long long>(coordinates.x) * 3 + static_cast<unsigned long long>(coordinates.y) * 3 * this->width;
+
 	return Pixel({
-		this->buffer.get()->operator[](coordinates.x * 3 + coordinates.y * 3 * this->width + 2),
-		this->buffer.get()->operator[](coordinates.x * 3 + coordinates.y * 3 * this->width + 1),
-		this->buffer.get()->operator[](coordinates.x * 3 + coordinates.y * 3 * this->width)
+		this->buffer.get()->operator[](index + 2),
+		this->buffer.get()->operator[](index + 1),
+		this->buffer.get()->operator[](index)
 		});
 }
 
@@ -29,12 +31,12 @@ bool Capture::isValidPosition(const Coordinates & coordinates) const
 
 bool Capture::isValidXPosition(const unsigned & x) const
 {
-	return x < this->width
-		&& x >= 0;
+	return x >= 0
+		&& x < this->width;
 }
 
 bool Capture::isValidYPosition(const unsigned & y) const
 {
-	return y < this->height
-		&& y >= 0;
+	return y >= 0
+		&& y < this->height;
 }

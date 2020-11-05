@@ -1,19 +1,36 @@
 #include "LUT.h"
 
-LUT::LUT(const float & u1, const float & u2, const float & u3)
+LUT::LUT(const AbstractCurve & curve)
+	: data(LUT::getData(curve))
 {
-	for (float i = 0; i < 256; ++i)
-	{
-		const unsigned char value = static_cast<unsigned char>((
-			3 * u1 * (1 - (i / 255)) * (1 - (i / 255)) * (i / 255)
-			+ 3 * u2 * (1 - (i / 255)) * (i / 255) * (i / 255)
-			+ u3 * (i / 255) * (i / 255) * (i / 255)
-			) * 255);
-		this->data.push_back(value);
-	}
 }
 
 unsigned char LUT::get(const unsigned char & value) const
 {
 	return this->data[value];
+}
+
+std::vector<unsigned char> LUT::getData(const AbstractCurve & curve)
+{
+	std::vector<unsigned char> data;
+	for (unsigned i = 0; i <= 255; ++i)
+	{
+		const double x = i / 255.0;
+		const double value = curve.evaluate(x) * 255;
+
+		if (value < 0)
+		{
+			data.push_back(0);
+		}
+		else if (value > 255)
+		{
+			data.push_back(255);
+		}
+		else
+		{
+			data.push_back(static_cast<unsigned char>(value));
+		}
+	}
+
+	return data;
 }

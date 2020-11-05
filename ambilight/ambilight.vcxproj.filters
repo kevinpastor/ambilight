@@ -51,6 +51,18 @@
     <ClInclude Include="src\ColorGrader.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\BezierCurve.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Point.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\OneDimensionBezierCurve.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AbstractCurve.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Ambilight.cpp">
@@ -92,6 +104,10 @@
     <ClCompile Include="src\RGBLUT.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\BezierCurve.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OneDimensionBezierCurve.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

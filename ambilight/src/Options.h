@@ -1,10 +1,15 @@
 #pragma once
 
 #include <fstream>
-#include <sstream>
+#include <nlohmann/json.hpp>
+#include <stdexcept>
 #include <vector>
 
+#include "ColorGrader.h"
 #include "Coordinates.h"
+#include "LUT.h"
+#include "OneDimensionBezierCurve.h"
+#include "RGBLUT.h"
 
 class Options
 {
@@ -15,14 +20,22 @@ public:
 	std::string getPortName() const;
 	std::vector<Coordinates> getCoordinates() const;
 	float getSmoothing() const;
+	ColorGrader getColorGrader() const;
 
 private:
-	std::string path;
+	static nlohmann::json getJson(const std::string & path);
+	static std::string getPortName(const nlohmann::json & json);
+	static std::vector<Coordinates> getCoordinates(const nlohmann::json & json);
+	static float getSmoothing(const nlohmann::json & json);
+	static ColorGrader getColorGrader(const nlohmann::json & json);
+	static RGBLUT getRGBLut(const nlohmann::json & json);
+	static LUT getLut(const nlohmann::json & json);
+	static OneDimensionBezierCurve getOneDimensionBezierCurve(const nlohmann::json & json);
 
-	std::string portName;
-	std::vector<Coordinates> coordinates;
-	float smoothing;
-
-	void importOptions();
+	const nlohmann::json json;
+	const std::string portName;
+	const std::vector<Coordinates> coordinates;
+	const float smoothing;
+	const ColorGrader colorGrader;
 
 };

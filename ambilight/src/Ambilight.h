@@ -33,7 +33,6 @@ private:
 	const ScreenCapture screenCapture;
 	const PixelParser pixelParser;
 	const ArduinoSerial arduinoSerial;
-	const ColorGrader colorGrader;
 
 	mutable std::mutex mutex;
 

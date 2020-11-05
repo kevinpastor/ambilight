@@ -6,19 +6,7 @@ Ambilight::Ambilight()
 	: isPaused(false),
 	pixelParser(this->options.getCoordinates()),
 	arduinoSerial(this->options.getPortName()),
-	pixels(this->options.getCoordinates().size()),
-	colorGrader(
-		RGBLUT(
-			LUT(0.05f, 0.65f, 0.80f),
-			LUT(0.15f, 0.66f, 1.00f),
-			LUT(0.08f, 0.44f, 0.56f)
-		),
-		RGBLUT(
-			LUT(0.00f, 0.19f, 0.35f),
-			LUT(0.00f, 0.28f, 0.60f),
-			LUT(0.00f, 0.10f, 0.20f)
-		)
-	)
+	pixels(this->options.getCoordinates().size())
 {
 }
 
@@ -96,7 +84,7 @@ std::thread Ambilight::capture()
 		{
 			const Capture capture = this->screenCapture.capture();
 			const unsigned monitorBrightness = MonitorUtility::getBrightness();
-			const std::vector<Pixel> currentPixels = this->pixelParser.getPixels(capture, this->colorGrader);
+			const std::vector<Pixel> currentPixels = this->pixelParser.getPixels(capture, this->options.getColorGrader());
 			const std::vector<Pixel> data = PixelParser::mix(currentPixels, this->pixels, this->options.getSmoothing());
 
 			this->mutex.lock();

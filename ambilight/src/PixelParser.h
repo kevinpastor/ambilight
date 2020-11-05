@@ -29,6 +29,6 @@ private:
 
 	const std::vector<Coordinates> coordinates;
 
-	static const unsigned surroundingRadius = 19;
+	static const unsigned surroundingRadius = 20;
 
 };

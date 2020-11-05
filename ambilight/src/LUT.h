@@ -2,16 +2,19 @@
 
 #include <vector>
 
+#include "AbstractCurve.h"
 #include "Pixel.h"
 
 class LUT
 {
 public:
-	LUT(const float & u1, const float & u2, const float & u3);
+	LUT(const AbstractCurve & curve);
 
 	unsigned char get(const unsigned char & value) const;
 
 private:
-	std::vector<unsigned char> data;
+	static std::vector<unsigned char> getData(const AbstractCurve & curve);
+
+	const std::vector<unsigned char> data;
 
 };

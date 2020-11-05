@@ -23,6 +23,7 @@
     <ProjectGuid>{9FF018F5-8C98-4627-AE26-2E68249F9349}</ProjectGuid>
     <RootNamespace>ambilight</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Ambilight</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -67,14 +68,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)build\outputs\release\$(Platform)\</OutDir>
-    <IntDir>$(SolutionDir)build\intermediates\$(ProjectName)\release\$(Platform)\</IntDir>
-    <TargetName>ambilight</TargetName>
+    <OutDir>$(SolutionDir)build\outputs\$(Configuration.toLower())\$(Platform)\</OutDir>
+    <IntDir>$(SolutionDir)build\intermediates\$(ProjectName.toLower())\$(Configuration.toLower())\$(Platform)\</IntDir>
+    <TargetName>$(ProjectName.toLower())</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)build\outputs\debug\$(Platform)\</OutDir>
-    <IntDir>$(SolutionDir)build\intermediates\$(ProjectName)\debug\$(Platform)\</IntDir>
-    <TargetName>ambilight</TargetName>
+    <OutDir>$(SolutionDir)build\outputs\$(Configuration.toLower())\$(Platform)\</OutDir>
+    <IntDir>$(SolutionDir)build\intermediates\$(ProjectName.toLower())\$(Configuration.toLower())\$(Platform)\</IntDir>
+    <TargetName>$(ProjectName.toLower())</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -126,14 +127,18 @@
   <ItemGroup>
     <ClInclude Include="src\Ambilight.h" />
     <ClInclude Include="src\ArduinoSerial.h" />
+    <ClInclude Include="src\BezierCurve.h" />
     <ClInclude Include="src\Capture.h" />
     <ClInclude Include="src\Coordinates.h" />
+    <ClInclude Include="src\AbstractCurve.h" />
     <ClInclude Include="src\LUT.h" />
     <ClInclude Include="src\MonitorUtility.h" />
     <ClInclude Include="src\ColorGrader.h" />
+    <ClInclude Include="src\OneDimensionBezierCurve.h" />
     <ClInclude Include="src\Options.h" />
     <ClInclude Include="src\Pixel.h" />
     <ClInclude Include="src\PixelParser.h" />
+    <ClInclude Include="src\Point.h" />
     <ClInclude Include="src\resource.h" />
     <ClInclude Include="src\RGBLUT.h" />
     <ClInclude Include="src\ScreenCapture.h" />
@@ -143,11 +148,13 @@
   <ItemGroup>
     <ClCompile Include="src\Ambilight.cpp" />
     <ClCompile Include="src\ArduinoSerial.cpp" />
+    <ClCompile Include="src\BezierCurve.cpp" />
     <ClCompile Include="src\Capture.cpp" />
     <ClCompile Include="src\LUT.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MonitorUtility.cpp" />
     <ClCompile Include="src\ColorGrader.cpp" />
+    <ClCompile Include="src\OneDimensionBezierCurve.cpp" />
     <ClCompile Include="src\Options.cpp" />
     <ClCompile Include="src\PixelParser.cpp" />
     <ClCompile Include="src\RGBLUT.cpp" />
