@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mutex>
+#include <thread>
 #include <vector>
 
 #include "ArduinoSerial.h"
@@ -19,6 +20,9 @@ public:
 	~Ambilight();
 
 	void start();
+	void userPause();
+	void userResume();
+	void stop();
 
 private:
 	void resume();
@@ -36,6 +40,8 @@ private:
 
 	mutable std::mutex mutex;
 
+	bool isUserPaused;
+	bool isStopped;
 	bool isPaused;
 
 	std::vector<Pixel> pixels;

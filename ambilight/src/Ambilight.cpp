@@ -3,7 +3,8 @@
 const std::chrono::milliseconds Ambilight::PAUSED_REFRESH_RATE = std::chrono::milliseconds(500);
 
 Ambilight::Ambilight()
-	: isPaused(false),
+	: isStopped(false),
+	isPaused(false),
 	pixelParser(this->options.getCoordinates()),
 	arduinoSerial(this->options.getPortName()),
 	pixels(this->options.getCoordinates().size())
@@ -20,7 +21,7 @@ void Ambilight::start()
 	std::thread captureThread;
 	std::thread sendingThread;
 
-	while (true)
+	while (!this->isStopped)
 	{
 		if (SessionUtility::isLocked())
 		{
@@ -38,7 +39,7 @@ void Ambilight::start()
 			}
 		}
 
-		if (this->isPaused)
+		if (this->isPaused || this->isUserPaused)
 		{
 			if (captureThread.joinable())
 			{
@@ -66,6 +67,31 @@ void Ambilight::start()
 		}
 		sendingThread = this->send();
 	}
+
+	if (captureThread.joinable())
+	{
+		captureThread.join();
+	}
+
+	if (sendingThread.joinable())
+	{
+		sendingThread.join();
+	}
+}
+
+void Ambilight::userPause()
+{
+	this->isUserPaused = true;
+}
+
+void Ambilight::userResume()
+{
+	this->isUserPaused = false;
+}
+
+void Ambilight::stop()
+{
+	this->isStopped = true;
 }
 
 void Ambilight::resume()

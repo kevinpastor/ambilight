@@ -4,6 +4,9 @@
     <Filter Include="src">
       <UniqueIdentifier>{de0e89bd-8437-4b65-9024-2921bb51b29c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\resources">
+      <UniqueIdentifier>{2e8d67a9-a5df-4163-a13e-f54e63db7931}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Ambilight.h">
@@ -22,9 +25,6 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\PixelParser.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\resource.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\ScreenCapture.h">
@@ -63,6 +63,13 @@
     <ClInclude Include="src\AbstractCurve.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\App.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources\resource.h">
+      <Filter>src\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Logger.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Ambilight.cpp">
@@ -107,9 +114,27 @@
     <ClCompile Include="src\BezierCurve.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\OneDimensionBezierCurve.cpp" />
+    <ClCompile Include="src\App.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OneDimensionBezierCurve.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Logger.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="src\resources\app.rc">
+      <Filter>src\resources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="src\resources\icon.ico">
+      <Filter>src\resources</Filter>
+    </Image>
   </ItemGroup>
 </Project>

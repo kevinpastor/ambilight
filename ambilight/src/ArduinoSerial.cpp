@@ -15,7 +15,7 @@ void ArduinoSerial::send(const std::vector<Pixel> & pixels) const
 	buffer.push_back('A');
 	buffer.push_back('d');
 	buffer.push_back('a');
-	buffer.push_back((nbLed - 1) >> 8);
+	buffer.push_back(static_cast<unsigned char>((nbLed - 1) >> 8));
 	buffer.push_back((nbLed - 1) & 0xff);
 	buffer.push_back(buffer[3] ^ buffer[4] ^ 0x55);
 
