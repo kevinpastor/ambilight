@@ -14,7 +14,7 @@ Pixel Capture::getPixel(const Coordinates & coordinates) const
 		throw std::invalid_argument("Out of bound coordinates");
 	}
 
-	const unsigned long long index = static_cast<unsigned long long>(coordinates.x) * 3 + static_cast<unsigned long long>(coordinates.y) * 3 * this->width;
+	const unsigned long long index = 3ull * coordinates.x + 3ull * coordinates.y * this->width;
 
 	return Pixel({
 		this->buffer.get()->operator[](index + 2),

@@ -4,7 +4,7 @@ MonitorUtility * MonitorUtility::instance = nullptr;
 const std::chrono::milliseconds MonitorUtility::REFRESH_RATE = std::chrono::milliseconds(1000);
 
 MonitorUtility::MonitorUtility()
-	: brightness(100)
+	: brightness(MonitorUtility::getCurrentBrightness())
 {
 }
 
@@ -20,42 +20,38 @@ MonitorUtility * MonitorUtility::getInstance()
 
 unsigned MonitorUtility::getBrightness()
 {
-	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-	if ((now - MonitorUtility::getInstance()->lastMeasurement) > MonitorUtility::REFRESH_RATE)
+	MonitorUtility * instance = MonitorUtility::getInstance();
+	const std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+	if ((now - instance->lastMeasurement) > MonitorUtility::REFRESH_RATE)
 	{
-		if (MonitorUtility::getInstance()->thread.joinable())
+		if (instance->future.valid())
 		{
-			MonitorUtility::getInstance()->thread.join();
+			instance->brightness = instance->future.get();
 		}
 
-		MonitorUtility::getInstance()->thread = std::thread([]()
-			{
-				MonitorUtility::getInstance()->updateBrightness();
-			});
+		instance->future = std::async(std::launch::async, MonitorUtility::getCurrentBrightness);
 
-		MonitorUtility::getInstance()->lastMeasurement = now;
+		instance->lastMeasurement = now;
 	}
 
-	return MonitorUtility::getInstance()->brightness;
+	return instance->brightness;
 }
 
-void MonitorUtility::updateBrightness()
+unsigned MonitorUtility::getCurrentBrightness()
 {
-	const HWND hWnd = GetDesktopWindow();
-	const HMONITOR hMonitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTOPRIMARY);
+	HWND hWnd = GetDesktopWindow();
+	HMONITOR hMonitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTOPRIMARY);
 
 	DWORD numberOfPhysicalMonitors;
 	if (!GetNumberOfPhysicalMonitorsFromHMONITOR(hMonitor, &numberOfPhysicalMonitors))
 	{
-		this->brightness = 100;
-		return;
+		return 100;
 	}
 
 	std::vector<PHYSICAL_MONITOR> physicalMonitors(numberOfPhysicalMonitors);
 	if (!GetPhysicalMonitorsFromHMONITOR(hMonitor, numberOfPhysicalMonitors, physicalMonitors.data()))
 	{
-		this->brightness = 100;
-		return;
+		return 100;
 	}
 
 	const HANDLE hPhysicalMonitor = physicalMonitors[0].hPhysicalMonitor;
@@ -64,9 +60,8 @@ void MonitorUtility::updateBrightness()
 	DWORD maximumBrightness = 0;
 	if (!GetMonitorBrightness(hPhysicalMonitor, &minimumBrightness, &currentBrightness, &maximumBrightness))
 	{
-		this->brightness = 100;
-		return;
+		return 100;
 	}
 
-	this->brightness = currentBrightness;
+	return currentBrightness;
 }

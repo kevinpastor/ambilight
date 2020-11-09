@@ -21,17 +21,30 @@ ScreenCapture::~ScreenCapture()
 
 Capture ScreenCapture::capture() const
 {
-	BitBlt(this->hdcMem, 0, 0, this->width, this->height, hScreen, 0, 0, SRCCOPY);
+	if (!BitBlt(this->hdcMem, 0, 0, this->width, this->height, hScreen, 0, 0, SRCCOPY))
+	{
+		throw std::runtime_error("Unable to take a screen capture");
+	}
 
 	const std::shared_ptr<std::vector<unsigned char>> screenCaptureData = std::make_shared<std::vector<unsigned char>>(this->width * this->height * 3);
-	GetDIBits(this->hdcMem, hBitmap, 0, this->height, screenCaptureData.get()->data(), const_cast<BITMAPINFO *>(&this->bitmapInfo), DIB_RGB_COLORS);
+	if (!GetDIBits(this->hdcMem, hBitmap, 0, this->height, screenCaptureData.get()->data(), const_cast<BITMAPINFO *>(&this->bitmapInfo), DIB_RGB_COLORS))
+	{
+		throw std::runtime_error("Unable to retrieve the screen capture");
+	}
 
 	return Capture(screenCaptureData, this->width, this->height);
 }
 
 HDC ScreenCapture::getHDC()
 {
-	return GetDC(ScreenCapture::getHwnd());
+	HDC hdc = GetDC(ScreenCapture::getHwnd());
+
+	if (hdc == NULL)
+	{
+		throw std::runtime_error("Unable to get a handle for the screen");
+	}
+
+	return hdc;
 }
 
 HWND ScreenCapture::getHwnd()

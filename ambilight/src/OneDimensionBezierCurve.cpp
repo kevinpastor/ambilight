@@ -31,13 +31,13 @@ std::vector<Point> OneDimensionBezierCurve::convertToControlPoints(const std::ve
 
 	const unsigned long long degree = controlValues.size() - 1;
 
-	std::vector<Point> controlPoints;
+	std::vector<Point> controlPoints(controlValues.size());
 	for (unsigned i = 0; i < controlValues.size(); ++i)
 	{
 		const double x = i * 1.0 / degree;
 		const double y = controlValues[i];
 		const Point point = { x, y };
-		controlPoints.push_back(point);
+		controlPoints[i] = point;
 	}
 
 	return controlPoints;

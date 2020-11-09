@@ -3,8 +3,8 @@
 #include <stdexcept>
 #include <vector>
 
-#include "BezierCurve.h"
 #include "AbstractCurve.h"
+#include "BezierCurve.h"
 #include "Point.h"
 
 class OneDimensionBezierCurve : public AbstractCurve

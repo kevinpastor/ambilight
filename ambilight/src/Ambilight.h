@@ -1,14 +1,14 @@
 #pragma once
 
+#include <chrono>
+#include <future>
 #include <mutex>
-#include <thread>
 #include <vector>
 
 #include "ArduinoSerial.h"
-#include "Coordinates.h"
-#include "MonitorUtility.h"
 #include "ColorGrader.h"
-#include "options.h"
+#include "Coordinates.h"
+#include "Options.h"
 #include "PixelParser.h"
 #include "ScreenCapture.h"
 #include "SessionUtility.h"
@@ -20,27 +20,24 @@ public:
 	~Ambilight();
 
 	void start();
-	void userPause();
-	void userResume();
+	void resume();
+	void pause();
 	void stop();
 
 private:
-	void resume();
-	void pause();
-
-	std::thread capture();
-	std::thread send() const;
+	void capture();
+	void send() const;
 
 	void fadeOut();
 
 	const Options options;
-	const ScreenCapture screenCapture;
-	const PixelParser pixelParser;
 	const ArduinoSerial arduinoSerial;
+	const ColorGrader colorGrader;
+	const PixelParser pixelParser;
+	const ScreenCapture screenCapture;
 
 	mutable std::mutex mutex;
 
-	bool isUserPaused;
 	bool isStopped;
 	bool isPaused;
 

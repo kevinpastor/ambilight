@@ -6,6 +6,17 @@ ColorGrader::ColorGrader(const RGBLUT & lut, const RGBLUT & dimmedLut)
 {
 }
 
+std::vector<Pixel> ColorGrader::correct(const std::vector<Pixel> & pixels) const
+{
+	std::vector<Pixel> corrected(pixels.size());
+	for (unsigned i = 0; i < pixels.size(); ++i)
+	{
+		corrected[i] = this->correct(pixels[i]);
+	}
+
+	return corrected;
+}
+
 Pixel ColorGrader::correct(const Pixel & pixel) const
 {
 	const unsigned monitorBrightness = MonitorUtility::getBrightness();
@@ -15,15 +26,4 @@ Pixel ColorGrader::correct(const Pixel & pixel) const
 	}
 
 	return this->dimmedLut.get(pixel);
-}
-
-std::vector<Pixel> ColorGrader::correct(const std::vector<Pixel> & pixels) const
-{
-	std::vector<Pixel> corrected;
-	for (const Pixel & pixel : pixels)
-	{
-		corrected.push_back(this->correct(pixel));
-	}
-
-	return corrected;
 }

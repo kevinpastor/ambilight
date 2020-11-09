@@ -4,7 +4,7 @@ SessionUtility * SessionUtility::instance = nullptr;
 const std::chrono::milliseconds SessionUtility::REFRESH_RATE = std::chrono::milliseconds(1000);
 
 SessionUtility::SessionUtility()
-	: locked(false)
+	: locked(SessionUtility::isCurrentlyLocked())
 {
 }
 
@@ -20,26 +20,24 @@ SessionUtility * SessionUtility::getInstance()
 
 bool SessionUtility::isLocked()
 {
-	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-	if ((now - SessionUtility::getInstance()->lastMeasurement) > SessionUtility::REFRESH_RATE)
+	SessionUtility * instance = SessionUtility::getInstance();
+	const std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+	if ((now - instance->lastMeasurement) > SessionUtility::REFRESH_RATE)
 	{
-		if (SessionUtility::getInstance()->thread.joinable())
+		if (instance->future.valid())
 		{
-			SessionUtility::getInstance()->thread.join();
+			instance->locked = instance->future.get();
 		}
 
-		SessionUtility::getInstance()->thread = std::thread([]()
-			{
-				SessionUtility::getInstance()->updateState();
-			});
+		instance->future = std::async(std::launch::async, SessionUtility::isCurrentlyLocked);
 
-		SessionUtility::getInstance()->lastMeasurement = now;
+		instance->lastMeasurement = now;
 	}
 
-	return SessionUtility::getInstance()->locked;
+	return instance->locked;
 }
 
-void SessionUtility::updateState()
+bool SessionUtility::isCurrentlyLocked()
 {
 	const DWORD dwSessionID = WTSGetActiveConsoleSessionId();
 	const WTS_INFO_CLASS wtsic = WTSSessionInfoEx;
@@ -47,32 +45,28 @@ void SessionUtility::updateState()
 	DWORD dwBytesReturned = 0;
 	if (!WTSQuerySessionInformationW(WTS_CURRENT_SERVER_HANDLE, dwSessionID, wtsic, &ppBuffer, &dwBytesReturned))
 	{
-		this->locked = false;
-		return;
+		return false;
 	}
 
 	if (dwBytesReturned == 0)
 	{
 		WTSFreeMemory(ppBuffer);
-		this->locked = false;
-		return;
+		return false;
 	}
 
 	const WTSINFOEXW * pInfo = reinterpret_cast<WTSINFOEXW *>(ppBuffer);
 	if (pInfo->Level != 1)
 	{
 		WTSFreeMemory(ppBuffer);
-		this->locked = false;
-		return;
+		return false;
 	}
 
 	if (pInfo->Data.WTSInfoExLevel1.SessionFlags != WTS_SESSIONSTATE_LOCK)
 	{
 		WTSFreeMemory(ppBuffer);
-		this->locked = false;
-		return;
+		return false;
 	}
 
 	WTSFreeMemory(ppBuffer);
-	this->locked = true;
+	return true;
 }

@@ -11,8 +11,8 @@ class ColorGrader
 public:
 	ColorGrader(const RGBLUT & lut, const RGBLUT & dimmedLut);
 
-	Pixel correct(const Pixel & pixel) const;
 	std::vector<Pixel> correct(const std::vector<Pixel> & pixels) const;
+	Pixel correct(const Pixel & pixel) const;
 
 private:
 	const RGBLUT lut;

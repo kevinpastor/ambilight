@@ -12,9 +12,6 @@
     <ClInclude Include="src\Ambilight.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\ArduinoSerial.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\Coordinates.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -30,37 +27,10 @@
     <ClInclude Include="src\ScreenCapture.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Serial.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\Capture.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\SessionUtility.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\MonitorUtility.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\LUT.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\RGBLUT.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ColorGrader.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BezierCurve.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\Point.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\OneDimensionBezierCurve.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\AbstractCurve.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\App.h">
@@ -69,13 +39,42 @@
     <ClInclude Include="src\resources\resource.h">
       <Filter>src\resources</Filter>
     </ClInclude>
-    <ClInclude Include="src\Logger.h" />
+    <ClInclude Include="src\Logger.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AbstractCurve.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BezierCurve.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ColorGrader.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LUT.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\OneDimensionBezierCurve.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RGBLUT.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ArduinoSerial.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Serial.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MonitorUtility.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SessionUtility.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Ambilight.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ArduinoSerial.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
@@ -90,16 +89,16 @@
     <ClCompile Include="src\ScreenCapture.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Serial.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\Capture.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\SessionUtility.cpp">
+    <ClCompile Include="src\App.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\MonitorUtility.cpp">
+    <ClCompile Include="src\Logger.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BezierCurve.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\ColorGrader.cpp">
@@ -108,19 +107,28 @@
     <ClCompile Include="src\LUT.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\RGBLUT.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BezierCurve.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\App.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\OneDimensionBezierCurve.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Logger.cpp">
+    <ClCompile Include="src\RGBLUT.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ArduinoSerial.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Serial.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MonitorUtility.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SessionUtility.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Point.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pixel.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 #include <string>
-#include <thread>
+#include <future>
 #include <windows.h>
 #include <Wtsapi32.h>
 
@@ -14,14 +14,20 @@
 class App
 {
 public:
-	App();
-
 	int start(const HINSTANCE & hInstance);
 
 private:
-	HWND createWindow();
-	
 	static LRESULT WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+	LRESULT onMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+	LRESULT onCreate(const HWND & hWnd) const;
+	LRESULT onFocus(const HWND & hWnd, const LPARAM & lParam);
+	void onClick(const HWND & hWnd, const int & itemId);
+	void onClickToggle(const HWND & hWnd);
+	void onClickExit(const HWND & hWnd) const;
+	LRESULT onDestroy(const HWND & hWnd) const;
+
+	static HWND createWindow(App * app);
 	static WNDCLASSEX getWindowClass(const HINSTANCE & instance);
 	static NOTIFYICONDATA getNotifyIconData(const HINSTANCE & instance, const HWND & hWnd);
 	static int handleMessages();

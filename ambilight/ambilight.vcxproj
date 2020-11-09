@@ -162,7 +162,9 @@
     <ClCompile Include="src\ColorGrader.cpp" />
     <ClCompile Include="src\OneDimensionBezierCurve.cpp" />
     <ClCompile Include="src\Options.cpp" />
+    <ClCompile Include="src\Pixel.cpp" />
     <ClCompile Include="src\PixelParser.cpp" />
+    <ClCompile Include="src\Point.cpp" />
     <ClCompile Include="src\RGBLUT.cpp" />
     <ClCompile Include="src\ScreenCapture.cpp" />
     <ClCompile Include="src\Serial.cpp" />

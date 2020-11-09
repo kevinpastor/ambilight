@@ -1,11 +1,9 @@
 #pragma once
 
 #include <chrono>
+#include <future>
 #include <highlevelmonitorconfigurationapi.h>
-#include <thread>
 #include <vector>
-#include <windows.h>
-#include <Wtsapi32.h>
 
 class MonitorUtility
 {
@@ -18,9 +16,10 @@ private:
 	static MonitorUtility * getInstance();
 	static MonitorUtility * instance;
 
-	void updateBrightness();
+	static unsigned getCurrentBrightness();
+
 	unsigned brightness;
-	std::thread thread;
+	std::future<unsigned> future;
 	std::chrono::steady_clock::time_point lastMeasurement;
 
 	static const unsigned DIMMED_BRIGHTNESS_LIMIT = 5;

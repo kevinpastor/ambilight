@@ -8,6 +8,7 @@ Options::Options()
 Options::Options(const std::string & optionPath)
 	: json(Options::getJson(optionPath)),
 	portName(Options::getPortName(this->json)),
+	radius(Options::getRadius(this->json)),
 	coordinates(Options::getCoordinates(this->json)),
 	smoothing(Options::getSmoothing(this->json)),
 	colorGrader(Options::getColorGrader(this->json))
@@ -17,6 +18,11 @@ Options::Options(const std::string & optionPath)
 std::string Options::getPortName() const
 {
 	return this->portName;
+}
+
+unsigned Options::getRadius() const
+{
+	return this->radius;
 }
 
 std::vector<Coordinates> Options::getCoordinates() const
@@ -62,6 +68,21 @@ std::string Options::getPortName(const nlohmann::json & json)
 	return json["portname"].get<std::string>();
 }
 
+unsigned Options::getRadius(const nlohmann::json & json)
+{
+	if (!json.contains("radius"))
+	{
+		throw std::runtime_error("Configuration should have attribute \"radius\"");
+	}
+
+	if (!json["radius"].is_number_unsigned())
+	{
+		throw std::runtime_error("Configuration $[\"radius\"] should be a unsigned");
+	}
+
+	return json["radius"].get<unsigned>();
+}
+
 std::vector<Coordinates> Options::getCoordinates(const nlohmann::json & json)
 {
 	if (!json.contains("coordinates"))
@@ -79,7 +100,8 @@ std::vector<Coordinates> Options::getCoordinates(const nlohmann::json & json)
 		throw std::runtime_error("Configuration $[\"coordinates\"] should have at least one element");
 	}
 
-	std::vector<Coordinates> coordinates;
+	std::vector<Coordinates> coordinates(json["coordinates"].size());
+	unsigned i = 0; // TODO
 	for (const nlohmann::json & coordinate : json["coordinates"]) {
 		if (!coordinate.contains("x"))
 		{
@@ -101,10 +123,10 @@ std::vector<Coordinates> Options::getCoordinates(const nlohmann::json & json)
 			throw std::runtime_error("Configuration $[\"coordinates\"][*][\"y\"] should be an integer");
 		}
 
-		coordinates.push_back({
+		coordinates[i++] = {
 			coordinate["x"].get<int>(),
 			coordinate["y"].get<int>(),
-			});
+		};
 	}
 	return coordinates;
 }
@@ -167,7 +189,7 @@ RGBLUT Options::getRGBLut(const nlohmann::json & json)
 	return RGBLUT(
 		Options::getLut(json["r"]),
 		Options::getLut(json["g"]),
-		Options::getLut(json["r"])
+		Options::getLut(json["b"])
 	);
 }
 
@@ -209,7 +231,8 @@ OneDimensionBezierCurve Options::getOneDimensionBezierCurve(const nlohmann::json
 		throw std::runtime_error("Configuration $[\"luts\"][*][?(@[\"type\"] == \"oneDimensionBezierCurve\")][\"controlValues\"] should have at least two elements");
 	}
 
-	std::vector<double> controlValues;
+	std::vector<double> controlValues(json["controlValues"].size());
+	unsigned i = 0; // TODO
 	for (const nlohmann::json & controlValue : json["controlValues"])
 	{
 		if (!controlValue.is_number())
@@ -217,7 +240,7 @@ OneDimensionBezierCurve Options::getOneDimensionBezierCurve(const nlohmann::json
 			throw std::runtime_error("Configuration $[\"luts\"][*][?(@[\"type\"] == \"oneDimensionBezierCurve\")][\"controlValues\"][*] should be a double");
 		}
 
-		controlValues.push_back(controlValue.get<double>());
+		controlValues[i++] = controlValue.get<double>();
 	}
 
 	return OneDimensionBezierCurve(controlValues);

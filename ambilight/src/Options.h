@@ -18,6 +18,7 @@ public:
 	Options(const std::string & optionPath);
 
 	std::string getPortName() const;
+	unsigned getRadius() const;
 	std::vector<Coordinates> getCoordinates() const;
 	double getSmoothing() const;
 	ColorGrader getColorGrader() const;
@@ -25,6 +26,7 @@ public:
 private:
 	static nlohmann::json getJson(const std::string & path);
 	static std::string getPortName(const nlohmann::json & json);
+	static unsigned getRadius(const nlohmann::json & json);
 	static std::vector<Coordinates> getCoordinates(const nlohmann::json & json);
 	static double getSmoothing(const nlohmann::json & json);
 	static ColorGrader getColorGrader(const nlohmann::json & json);
@@ -34,6 +36,7 @@ private:
 
 	const nlohmann::json json;
 	const std::string portName;
+	const unsigned radius;
 	const std::vector<Coordinates> coordinates;
 	const double smoothing;
 	const ColorGrader colorGrader;

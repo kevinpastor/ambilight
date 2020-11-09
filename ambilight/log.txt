@@ -1,0 +1,2 @@
+1604945746 Serial handle was not attached
+1604945754 Serial handle was not attached

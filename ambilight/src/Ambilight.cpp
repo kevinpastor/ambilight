@@ -3,95 +3,70 @@
 const std::chrono::milliseconds Ambilight::PAUSED_REFRESH_RATE = std::chrono::milliseconds(500);
 
 Ambilight::Ambilight()
-	: isStopped(false),
-	isPaused(false),
-	pixelParser(this->options.getCoordinates()),
+	: options(),
 	arduinoSerial(this->options.getPortName()),
+	colorGrader(this->options.getColorGrader()),
+	pixelParser(this->options.getCoordinates(), this->options.getRadius()),
+	screenCapture(),
+	mutex(),
+	isStopped(false),
+	isPaused(false),
 	pixels(this->options.getCoordinates().size())
 {
 }
 
 Ambilight::~Ambilight()
 {
-	this->pause();
+	this->stop();
 }
 
 void Ambilight::start()
 {
-	std::thread captureThread;
-	std::thread sendingThread;
+	std::future<void> captureFuture;
+	std::future<void> sendingFuture;
 
 	while (!this->isStopped)
 	{
-		if (SessionUtility::isLocked())
+		if (SessionUtility::isLocked() || this->isPaused)
 		{
-			if (!this->isPaused)
+			if (captureFuture.valid())
 			{
-				this->pause();
-				this->fadeOut();
+				captureFuture.get();
 			}
-		}
-		else
-		{
-			if (this->isPaused)
+			if (sendingFuture.valid())
 			{
-				this->resume();
+				sendingFuture.get();
 			}
-		}
 
-		if (this->isPaused || this->isUserPaused)
-		{
-			if (captureThread.joinable())
-			{
-				captureThread.join();
-			}
-			if (sendingThread.joinable())
-			{
-				sendingThread.join();
-			}
+			this->fadeOut();
 
 			std::this_thread::sleep_for(Ambilight::PAUSED_REFRESH_RATE);
 
 			continue;
 		}
 
-		if (captureThread.joinable())
+		if (captureFuture.valid())
 		{
-			captureThread.join();
+			captureFuture.get();
 		}
-		captureThread = this->capture();
+		captureFuture = std::async(std::launch::async, &Ambilight::capture, this);
 
-		if (sendingThread.joinable())
+		if (sendingFuture.valid())
 		{
-			sendingThread.join();
+			sendingFuture.get();
 		}
-		sendingThread = this->send();
+		sendingFuture = std::async(std::launch::async, &Ambilight::send, this);
 	}
 
-	if (captureThread.joinable())
+	if (captureFuture.valid())
 	{
-		captureThread.join();
+		captureFuture.get();
 	}
 
-	if (sendingThread.joinable())
+	if (sendingFuture.valid())
 	{
-		sendingThread.join();
+		sendingFuture.get();
 	}
-}
-
-void Ambilight::userPause()
-{
-	this->isUserPaused = true;
-}
-
-void Ambilight::userResume()
-{
-	this->isUserPaused = false;
-}
-
-void Ambilight::stop()
-{
-	this->isStopped = true;
 }
 
 void Ambilight::resume()
@@ -104,37 +79,37 @@ void Ambilight::pause()
 	this->isPaused = true;
 }
 
-std::thread Ambilight::capture()
+void Ambilight::stop()
 {
-	return std::thread([this]()
-		{
-			const Capture capture = this->screenCapture.capture();
-			const unsigned monitorBrightness = MonitorUtility::getBrightness();
-			const std::vector<Pixel> currentPixels = this->pixelParser.getPixels(capture, this->options.getColorGrader());
-			const std::vector<Pixel> data = PixelParser::mix(currentPixels, this->pixels, this->options.getSmoothing());
-
-			this->mutex.lock();
-			this->pixels = data;
-			this->mutex.unlock();
-		});
+	this->isStopped = true;
 }
 
-std::thread Ambilight::send() const
+void Ambilight::capture()
 {
-	return std::thread([this]()
-		{
-			this->mutex.lock();
-			this->arduinoSerial.send(this->pixels);
-			this->mutex.unlock();
-		});
+	const Capture capture = this->screenCapture.capture();
+	
+	const std::vector<Pixel> currentPixels = this->pixelParser.getPixels(capture);
+	const std::vector<Pixel> colorCorrectedPixels = this->colorGrader.correct(currentPixels);
+	const std::vector<Pixel> data = Pixel::mix(colorCorrectedPixels, this->pixels, this->options.getSmoothing());
+
+	this->mutex.lock();
+	this->pixels = data;
+	this->mutex.unlock();
+}
+
+void Ambilight::send() const
+{
+	this->mutex.lock();
+	this->arduinoSerial.send(this->pixels);
+	this->mutex.unlock();
 }
 
 void Ambilight::fadeOut()
 {
 	const Pixel black({ 0, 0, 0 });
-	for (unsigned i = 0; i < 10; ++i)
+	for (unsigned i = 0; i < 20; ++i)
 	{
-		this->pixels = PixelParser::mix(this->pixels, black, this->options.getSmoothing());
+		this->pixels = Pixel::mix(this->pixels, black, 0.70);
 		this->arduinoSerial.send(this->pixels);
 	}
 

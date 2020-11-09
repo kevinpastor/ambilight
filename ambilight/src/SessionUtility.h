@@ -1,7 +1,7 @@
 #pragma once
 
+#include <future>
 #include <chrono>
-#include <thread>
 #include <windows.h>
 #include <Wtsapi32.h>
 
@@ -16,9 +16,10 @@ private:
 	static SessionUtility * getInstance();
 	static SessionUtility * instance;
 
-	void updateState();
+	static bool isCurrentlyLocked();
+
 	bool locked;
-	std::thread thread;
+	std::future<bool> future;
 	std::chrono::steady_clock::time_point lastMeasurement;
 
 	static const std::chrono::milliseconds REFRESH_RATE;
