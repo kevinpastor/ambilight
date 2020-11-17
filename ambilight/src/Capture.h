@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <memory>
 #include <stdexcept>
 #include <vector>
@@ -10,7 +11,7 @@
 class Capture
 {
 public:
-	Capture(const std::shared_ptr<std::vector<unsigned char>> & buffer, const unsigned & width, const unsigned & height);
+	Capture(const unsigned char * buffer, const unsigned & width, const unsigned & height);
 
 	Pixel getPixel(const Coordinates & coordinates) const;
 	bool isValidXPosition(const unsigned & x) const;
@@ -19,7 +20,7 @@ public:
 private:
 	bool isValidPosition(const Coordinates & coordinates) const;
 
-	const std::shared_ptr<std::vector<unsigned char>> buffer;
+	const unsigned char * buffer;
 	const unsigned width;
 	const unsigned height;
 

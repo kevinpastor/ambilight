@@ -7,7 +7,6 @@
 #include "MonitorUtility.h"
 #include "Pixel.h"
 #include "ScreenCapture.h"
-#include "SessionUtility.h"
 
 class PixelParser
 {

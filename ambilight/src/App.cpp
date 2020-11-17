@@ -91,6 +91,10 @@ LRESULT App::onMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			return this->onCreate(hWnd);
 		}
+		case (WM_WTSSESSION_CHANGE):
+		{
+			return this->onSessionChange(wParam);
+		}
 		case (App::WM_SYSICON):
 		{
 			return this->onFocus(hWnd, lParam);
@@ -106,6 +110,8 @@ LRESULT App::onMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 LRESULT App::onCreate(const HWND & hWnd) const
 {
+	WTSRegisterSessionNotification(hWnd, NOTIFY_FOR_THIS_SESSION);
+
 	ShowWindow(hWnd, SW_HIDE);
 	HMENU mainMenu = CreateMenu();
 	HMENU subMenu = CreatePopupMenu();
@@ -130,7 +136,26 @@ LRESULT App::onCreate(const HWND & hWnd) const
 		throw std::runtime_error("Unable to set the menu");
 	}
 
-	return true;
+	return 0;
+}
+
+LRESULT App::onSessionChange(const WPARAM & wParam)
+{
+	switch (wParam)
+	{
+		case (WTS_SESSION_LOCK):
+		{
+			this->ambilight.pause();
+			return 0;
+		}
+		case (WTS_SESSION_UNLOCK):
+		{
+			this->ambilight.resume();
+			return 0;
+		}
+	}
+
+	return -1;
 }
 
 LRESULT App::onFocus(const HWND & hWnd, const LPARAM & lParam)
@@ -157,12 +182,13 @@ LRESULT App::onFocus(const HWND & hWnd, const LPARAM & lParam)
 		}
 		SendMessage(hWnd, WM_NULL, NULL, NULL); // Send benign message to window to make sure the menu goes away.
 
-		this->onClick(hWnd, itemId);
+		return this->onClick(hWnd, itemId);
 	}
-	return true;
+
+	return -1;
 }
 
-void App::onClick(const HWND & hWnd, const int & itemId)
+LRESULT App::onClick(const HWND & hWnd, const int & itemId)
 {
 	switch (itemId)
 	{
@@ -176,9 +202,11 @@ void App::onClick(const HWND & hWnd, const int & itemId)
 			return this->onClickExit(hWnd);
 		}
 	}
+
+	return -1;
 }
 
-void App::onClickToggle(const HWND & hWnd)
+LRESULT App::onClickToggle(const HWND & hWnd)
 {
 	HMENU mainMenu = GetMenu(hWnd);
 	HMENU subMenu = GetSubMenu(mainMenu, 0);
@@ -225,14 +253,18 @@ void App::onClickToggle(const HWND & hWnd)
 
 		this->ambilight.resume();
 	}
+
+	return 0;
 }
 
-void App::onClickExit(const HWND & hWnd) const
+LRESULT App::onClickExit(const HWND & hWnd) const
 {
 	if (!PostMessage(hWnd, WM_CLOSE, NULL, NULL))
 	{
 		throw std::runtime_error("Unable to successfully close the app");
 	}
+
+	return 0;
 }
 
 LRESULT App::onDestroy(const HWND & hWnd) const

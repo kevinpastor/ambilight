@@ -71,7 +71,7 @@ std::vector<Pixel> PixelParser::getSurrounding(const Capture & capture, const Co
 				continue;
 			}
 
-			const Coordinates coordinates = { static_cast<int>(x), static_cast<int>(y) };
+			const Coordinates coordinates({ static_cast<int>(x), static_cast<int>(y) });
 			const Pixel pixel = capture.getPixel(coordinates);
 			pixels.push_back(pixel);
 		}

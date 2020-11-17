@@ -2,44 +2,35 @@
 
 std::vector<Pixel> Pixel::mix(const std::vector<Pixel> & first, const std::vector<Pixel> & second, const double & weight)
 {
-	if (first.size() != second.size())
-	{
-		throw std::invalid_argument("Vector of different size");
-	}
+	assert(first.size() == second.size());
 
-	std::vector<Pixel> fadedPixels(first.size());
+	std::vector<Pixel> mixedPixels(first.size());
 	for (unsigned i = 0; i < first.size(); ++i)
 	{
 		const Pixel mixed = Pixel::mix(first[i], second[i], weight);
-		fadedPixels[i] = mixed;
+		mixedPixels[i] = mixed;
 	}
 
-	return fadedPixels;
+	return mixedPixels;
 }
 
 std::vector<Pixel> Pixel::mix(const std::vector<Pixel> & first, const Pixel & second, const double & weight)
 {
-	std::vector<Pixel> fadedPixels(first.size());
+	std::vector<Pixel> mixedPixels(first.size());
 	for (unsigned i = 0; i < first.size(); ++i)
 	{
 		const Pixel pixel = first[i];
 		const Pixel mixed = Pixel::mix(pixel, second, weight);
-		fadedPixels[i] = mixed;
+		mixedPixels[i] = mixed;
 	}
 
-	return fadedPixels;
+	return mixedPixels;
 }
 
 Pixel Pixel::mix(const Pixel & first, const Pixel & second, const double & weight)
 {
-	if (weight < 0)
-	{
-		throw std::runtime_error("Weight cannot be smaller than 0");
-	}
-	else if (weight > 1)
-	{
-		throw std::runtime_error("Weight cannot be larger than 1");
-	}
+	assert(weight >= 0);
+	assert(weight <= 1);
 
 	const unsigned char red = static_cast<unsigned char>(weight * first.red + (1 - weight) * second.red);
 	const unsigned char green = static_cast<unsigned char>(weight * first.green + (1 - weight) * second.green);
@@ -48,12 +39,15 @@ Pixel Pixel::mix(const Pixel & first, const Pixel & second, const double & weigh
 	return Pixel({ red, green, blue });
 }
 
+std::vector<Pixel> Pixel::fadeOut(const std::vector<Pixel> & pixels, const double & weight)
+{
+	const Pixel black({ 0, 0, 0 });
+	return Pixel::mix(pixels, black, weight);
+}
+
 Pixel Pixel::average(const std::vector<Pixel> & pixels)
 {
-	if (pixels.size() == 0)
-	{
-		throw std::runtime_error("Pixels cannot have a size of 0");
-	}
+	assert(pixels.size() != 0);
 
 	unsigned totalRed = 0;
 	unsigned totalGreen = 0;

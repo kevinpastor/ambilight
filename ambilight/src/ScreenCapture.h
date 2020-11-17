@@ -12,7 +12,7 @@
 class ScreenCapture
 {
 public:
-	ScreenCapture();
+	ScreenCapture(const std::vector<Coordinates> & coordinates, const unsigned & radius);
 	~ScreenCapture();
 
 	Capture capture() const;
@@ -24,12 +24,16 @@ private:
 	static unsigned getHeight(const HDC & hScreen);
 	static BITMAPINFO getBitmapInfo(const unsigned & width, const unsigned & height);
 
+	const std::vector<Coordinates> coordinates;
+	const unsigned radius;
+
 	const HDC hScreen;
 	const unsigned width;
 	const unsigned height;
+	unsigned char * buffer;
+	const BITMAPINFO bitmapInfo;
 	const HDC hdcMem;
 	const HBITMAP hBitmap;
 	const HGDIOBJ hOld;
-	const BITMAPINFO bitmapInfo;
 
 };

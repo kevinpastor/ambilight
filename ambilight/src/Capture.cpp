@@ -1,6 +1,6 @@
 #include "Capture.h"
 
-Capture::Capture(const std::shared_ptr<std::vector<unsigned char>> & buffer, const unsigned & width, const unsigned & height)
+Capture::Capture(const unsigned char * buffer, const unsigned & width, const unsigned & height)
 	: buffer(buffer),
 	width(width),
 	height(height)
@@ -9,17 +9,14 @@ Capture::Capture(const std::shared_ptr<std::vector<unsigned char>> & buffer, con
 
 Pixel Capture::getPixel(const Coordinates & coordinates) const
 {
-	if (!this->isValidPosition(coordinates))
-	{
-		throw std::invalid_argument("Out of bound coordinates");
-	}
+	assert(this->isValidPosition(coordinates));
 
-	const unsigned long long index = 3ull * coordinates.x + 3ull * coordinates.y * this->width;
+	const unsigned long long index = 3ull * (coordinates.x + coordinates.y * this->width);
 
 	return Pixel({
-		this->buffer.get()->operator[](index + 2),
-		this->buffer.get()->operator[](index + 1),
-		this->buffer.get()->operator[](index)
+		this->buffer[index + 2],
+		this->buffer[index + 1],
+		this->buffer[index]
 		});
 }
 

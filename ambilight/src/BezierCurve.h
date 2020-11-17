@@ -1,9 +1,10 @@
 #pragma once
 
-#include "Point.h"
-
+#include <cassert>
 #include <stdexcept>
 #include <vector>
+
+#include "Point.h"
 
 class BezierCurve
 {

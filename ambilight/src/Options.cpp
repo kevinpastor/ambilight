@@ -101,8 +101,9 @@ std::vector<Coordinates> Options::getCoordinates(const nlohmann::json & json)
 	}
 
 	std::vector<Coordinates> coordinates(json["coordinates"].size());
-	unsigned i = 0; // TODO
-	for (const nlohmann::json & coordinate : json["coordinates"]) {
+	for (unsigned i = 0; i < json["coordinates"].size(); ++i)
+	{
+		const nlohmann::json & coordinate = json["coordinates"][i];
 		if (!coordinate.contains("x"))
 		{
 			throw std::runtime_error("Configuration $[\"coordinates\"][*] should have attribute \"x\"");
@@ -123,7 +124,7 @@ std::vector<Coordinates> Options::getCoordinates(const nlohmann::json & json)
 			throw std::runtime_error("Configuration $[\"coordinates\"][*][\"y\"] should be an integer");
 		}
 
-		coordinates[i++] = {
+		coordinates[i] = {
 			coordinate["x"].get<int>(),
 			coordinate["y"].get<int>(),
 		};
@@ -232,15 +233,15 @@ OneDimensionBezierCurve Options::getOneDimensionBezierCurve(const nlohmann::json
 	}
 
 	std::vector<double> controlValues(json["controlValues"].size());
-	unsigned i = 0; // TODO
-	for (const nlohmann::json & controlValue : json["controlValues"])
+	for (unsigned i = 0; i < json["controlValues"].size(); ++i)
 	{
+		const nlohmann::json controlValue = json["controlValues"][i];
 		if (!controlValue.is_number())
 		{
 			throw std::runtime_error("Configuration $[\"luts\"][*][?(@[\"type\"] == \"oneDimensionBezierCurve\")][\"controlValues\"][*] should be a double");
 		}
 
-		controlValues[i++] = controlValue.get<double>();
+		controlValues[i] = controlValue.get<double>();
 	}
 
 	return OneDimensionBezierCurve(controlValues);

@@ -1,13 +1,15 @@
 #include "ScreenCapture.h"
 
-ScreenCapture::ScreenCapture()
-	: hScreen(ScreenCapture::getHDC()),
+ScreenCapture::ScreenCapture(const std::vector<Coordinates> & coordinates, const unsigned & radius)
+	: coordinates(coordinates),
+	radius(radius),
+	hScreen(ScreenCapture::getHDC()),
 	width(ScreenCapture::getWidth(this->hScreen)),
 	height(ScreenCapture::getHeight(this->hScreen)),
+	bitmapInfo(ScreenCapture::getBitmapInfo(this->width, this->height)),
 	hdcMem(CreateCompatibleDC(this->hScreen)),
-	hBitmap(CreateCompatibleBitmap(this->hScreen, this->width, this->height)),
-	hOld(SelectObject(this->hdcMem, this->hBitmap)),
-	bitmapInfo(ScreenCapture::getBitmapInfo(this->width, this->height))
+	hBitmap(CreateDIBSection(this->hScreen, &this->bitmapInfo, DIB_RGB_COLORS, reinterpret_cast<LPVOID *>(&this->buffer), NULL, 0)),
+	hOld(SelectObject(this->hdcMem, this->hBitmap))
 {
 }
 
@@ -21,18 +23,9 @@ ScreenCapture::~ScreenCapture()
 
 Capture ScreenCapture::capture() const
 {
-	if (!BitBlt(this->hdcMem, 0, 0, this->width, this->height, hScreen, 0, 0, SRCCOPY))
-	{
-		throw std::runtime_error("Unable to take a screen capture");
-	}
+	BitBlt(this->hdcMem, 0, 0, this->width, this->height, this->hScreen, 0, 0, SRCCOPY);
 
-	const std::shared_ptr<std::vector<unsigned char>> screenCaptureData = std::make_shared<std::vector<unsigned char>>(this->width * this->height * 3);
-	if (!GetDIBits(this->hdcMem, hBitmap, 0, this->height, screenCaptureData.get()->data(), const_cast<BITMAPINFO *>(&this->bitmapInfo), DIB_RGB_COLORS))
-	{
-		throw std::runtime_error("Unable to retrieve the screen capture");
-	}
-
-	return Capture(screenCaptureData, this->width, this->height);
+	return Capture(this->buffer, this->width, this->height);
 }
 
 HDC ScreenCapture::getHDC()
@@ -71,7 +64,7 @@ BITMAPINFO ScreenCapture::getBitmapInfo(const unsigned & width, const unsigned &
 	header.biPlanes = 1;
 	header.biBitCount = 24;
 	header.biCompression = BI_RGB;
-	header.biSizeImage = width * height;
+	header.biSizeImage = 0;
 
 	BITMAPINFO info;
 	info.bmiHeader = header;

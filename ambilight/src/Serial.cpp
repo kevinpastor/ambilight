@@ -21,7 +21,7 @@ Serial::Serial(const std::string & portName)
 		throw std::runtime_error("Unable to get serial parameters");
 	}
 
-	dcb.BaudRate = CBR_115200;
+	dcb.BaudRate = 200000;
 	dcb.ByteSize = 8;
 	dcb.StopBits = ONESTOPBIT;
 	dcb.Parity = NOPARITY;

@@ -21,10 +21,11 @@ private:
 
 	LRESULT onMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	LRESULT onCreate(const HWND & hWnd) const;
+	LRESULT onSessionChange(const WPARAM & wParam);
 	LRESULT onFocus(const HWND & hWnd, const LPARAM & lParam);
-	void onClick(const HWND & hWnd, const int & itemId);
-	void onClickToggle(const HWND & hWnd);
-	void onClickExit(const HWND & hWnd) const;
+	LRESULT onClick(const HWND & hWnd, const int & itemId);
+	LRESULT onClickToggle(const HWND & hWnd);
+	LRESULT onClickExit(const HWND & hWnd) const;
 	LRESULT onDestroy(const HWND & hWnd) const;
 
 	static HWND createWindow(App * app);

@@ -90,7 +90,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
@@ -120,6 +120,7 @@
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeaderFile />
+      <PreprocessorDefinitions>NDEBUG</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>Wtsapi32.lib;Dxva2.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -138,6 +139,7 @@
     <ClInclude Include="src\LUT.h" />
     <ClInclude Include="src\MonitorUtility.h" />
     <ClInclude Include="src\ColorGrader.h" />
+    <ClInclude Include="src\ScreenCapture.h" />
     <ClInclude Include="src\OneDimensionBezierCurve.h" />
     <ClInclude Include="src\Options.h" />
     <ClInclude Include="src\Pixel.h" />
@@ -145,9 +147,7 @@
     <ClInclude Include="src\Point.h" />
     <ClInclude Include="src\resources\resource.h" />
     <ClInclude Include="src\RGBLUT.h" />
-    <ClInclude Include="src\ScreenCapture.h" />
     <ClInclude Include="src\Serial.h" />
-    <ClInclude Include="src\SessionUtility.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Ambilight.cpp" />
@@ -160,15 +160,14 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MonitorUtility.cpp" />
     <ClCompile Include="src\ColorGrader.cpp" />
+    <ClCompile Include="src\ScreenCapture.cpp" />
     <ClCompile Include="src\OneDimensionBezierCurve.cpp" />
     <ClCompile Include="src\Options.cpp" />
     <ClCompile Include="src\Pixel.cpp" />
     <ClCompile Include="src\PixelParser.cpp" />
     <ClCompile Include="src\Point.cpp" />
     <ClCompile Include="src\RGBLUT.cpp" />
-    <ClCompile Include="src\ScreenCapture.cpp" />
     <ClCompile Include="src\Serial.cpp" />
-    <ClCompile Include="src\SessionUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

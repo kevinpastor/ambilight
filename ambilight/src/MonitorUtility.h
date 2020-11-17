@@ -16,8 +16,10 @@ private:
 	static MonitorUtility * getInstance();
 	static MonitorUtility * instance;
 
-	static unsigned getCurrentBrightness();
+	static std::vector<PHYSICAL_MONITOR> getPhysicalMonitors();
+	static unsigned getCurrentBrightness(const std::vector<PHYSICAL_MONITOR> & physicalMonitors);
 
+	const std::vector<PHYSICAL_MONITOR> physicalMonitors;
 	unsigned brightness;
 	std::future<unsigned> future;
 	std::chrono::steady_clock::time_point lastMeasurement;

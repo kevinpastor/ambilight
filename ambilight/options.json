@@ -1,5 +1,5 @@
 {
-    "smoothing": 0.5,
+    "smoothing": 0.6,
     "portname": "COM4",
     "radius": 35,
     "luts": [

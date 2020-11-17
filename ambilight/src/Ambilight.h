@@ -1,6 +1,10 @@
 #pragma once
 
+// TODO Remove
+#include <iostream>
+
 #include <chrono>
+#include <cmath>
 #include <future>
 #include <mutex>
 #include <vector>
@@ -11,7 +15,6 @@
 #include "Options.h"
 #include "PixelParser.h"
 #include "ScreenCapture.h"
-#include "SessionUtility.h"
 
 class Ambilight
 {
@@ -25,10 +28,10 @@ public:
 	void stop();
 
 private:
-	void capture();
-	void send() const;
+	std::vector<Pixel> capture(std::vector<Pixel> previousPixels) const;
+	void send(std::vector<Pixel> pixels) const;
 
-	void fadeOut();
+	void fadeOut(const std::vector<Pixel> & pixels) const;
 
 	const Options options;
 	const ArduinoSerial arduinoSerial;
@@ -40,8 +43,6 @@ private:
 
 	bool isStopped;
 	bool isPaused;
-
-	std::vector<Pixel> pixels;
 
 	static const std::chrono::milliseconds PAUSED_REFRESH_RATE;
 
