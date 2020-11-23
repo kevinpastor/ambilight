@@ -30,6 +30,15 @@
             }
         },
         {
+            "condition": [
+                "<=",
+                {
+                    "data": "brightness"
+                },
+                {
+                    "value": 5
+                }
+            ],
             "r": {
                 "type": "oneDimensionBezierCurve",
                 "controlValues": [

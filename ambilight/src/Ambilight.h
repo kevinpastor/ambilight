@@ -1,8 +1,5 @@
 #pragma once
 
-// TODO Remove
-#include <iostream>
-
 #include <chrono>
 #include <cmath>
 #include <future>

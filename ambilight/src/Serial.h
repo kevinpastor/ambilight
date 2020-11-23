@@ -14,6 +14,7 @@ public:
 private:
 	HANDLE handle;
 
-	static const unsigned ARDUINO_WAIT_TIME = 2000;
+	static const unsigned WAIT_TIME = 2000;
+	static const unsigned long BAUD_RATE = 200000; // TODO Extract to configuration file
 
 };

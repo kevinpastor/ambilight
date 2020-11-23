@@ -19,30 +19,30 @@ int App::start(const HINSTANCE & hInstance)
 	}
 
 	std::future<void> ambilightThread = std::async(std::launch::async, [&]()
+	{
+		try
 		{
-			try
-			{
-				this->ambilight.start();
-			}
-			catch (std::exception & exception)
-			{
-				Logger::log(exception);
+			this->ambilight.start();
+		}
+		catch (std::exception & exception)
+		{
+			Logger::log(exception);
 
-				if (!PostMessage(hWnd, WM_CLOSE, NULL, NULL))
-				{
-					Logger::log(std::runtime_error("Unable to successfully close the app"));
-				}
-			}
-			catch (...)
+			if (!PostMessage(hWnd, WM_CLOSE, NULL, NULL))
 			{
-				Logger::log(std::exception("Unexcepected error"));
-
-				if (!PostMessage(hWnd, WM_CLOSE, NULL, NULL))
-				{
-					Logger::log(std::runtime_error("Unable to successfully close the app"));
-				}
+				Logger::log(std::runtime_error("Unable to successfully close the app"));
 			}
-		});
+		}
+		catch (...)
+		{
+			Logger::log(std::exception("Unexcepected error"));
+
+			if (!PostMessage(hWnd, WM_CLOSE, NULL, NULL))
+			{
+				Logger::log(std::runtime_error("Unable to successfully close the app"));
+			}
+		}
+	});
 
 	const int returnCode = App::handleMessages();
 
@@ -176,10 +176,6 @@ LRESULT App::onFocus(const HWND & hWnd, const LPARAM & lParam)
 
 		// TrackPopupMenu blocks the app until TrackPopupMenu returns
 		const BOOL itemId = TrackPopupMenu(subMenu, TPM_RETURNCMD | TPM_NONOTIFY, curPoint.x, curPoint.y, NULL, hWnd, NULL);
-		if (!itemId)
-		{
-			// TODO
-		}
 		SendMessage(hWnd, WM_NULL, NULL, NULL); // Send benign message to window to make sure the menu goes away.
 
 		return this->onClick(hWnd, itemId);
@@ -231,9 +227,8 @@ LRESULT App::onClickToggle(const HWND & hWnd)
 	std::string label(buffer.begin(), buffer.end() - 1); // Skipping the null character
 	if (label == "Pause")
 	{
-		const std::string newLabel("Resume");
-		menuItemInfo.cch = static_cast<unsigned>(newLabel.length());
-		menuItemInfo.dwTypeData = const_cast<char *>(newLabel.data()); // TODO Remove const_cast
+		menuItemInfo.dwTypeData = "Resume";
+		menuItemInfo.cch = sizeof("Resume");
 		if (!SetMenuItemInfo(subMenu, App::ID_TRAY_TOGGLE, FALSE, &menuItemInfo))
 		{
 			throw std::runtime_error("Unable to update menu item");
@@ -243,9 +238,8 @@ LRESULT App::onClickToggle(const HWND & hWnd)
 	}
 	else
 	{
-		const std::string newLabel("Pause");
-		menuItemInfo.cch = static_cast<unsigned>(newLabel.length());
-		menuItemInfo.dwTypeData = const_cast<char *>(newLabel.data()); // TODO Remove const_cast
+		menuItemInfo.dwTypeData = "Pause";
+		menuItemInfo.cch = sizeof("Pause");
 		if (!SetMenuItemInfo(subMenu, App::ID_TRAY_TOGGLE, FALSE, &menuItemInfo))
 		{
 			throw std::runtime_error("Unable to update menu item");

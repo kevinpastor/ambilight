@@ -4,8 +4,8 @@ MonitorUtility * MonitorUtility::instance = nullptr;
 const std::chrono::milliseconds MonitorUtility::REFRESH_RATE = std::chrono::milliseconds(1000);
 
 MonitorUtility::MonitorUtility()
-	: physicalMonitors(MonitorUtility::getPhysicalMonitors()),
-	brightness(MonitorUtility::getCurrentBrightness(this->physicalMonitors))
+	: physicalMonitor(MonitorUtility::getPhysicalMonitor()),
+	brightness(MonitorUtility::getCurrentBrightness(this->physicalMonitor))
 {
 }
 
@@ -21,25 +21,25 @@ MonitorUtility * MonitorUtility::getInstance()
 
 unsigned MonitorUtility::getBrightness()
 {
-	MonitorUtility * instance = MonitorUtility::getInstance();
+	MonitorUtility * singleton = MonitorUtility::getInstance();
 
 	const std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-	if ((now - instance->lastMeasurement) > MonitorUtility::REFRESH_RATE)
+	if ((now - singleton->lastMeasurement) > MonitorUtility::REFRESH_RATE)
 	{
-		if (instance->future.valid())
+		if (singleton->future.valid())
 		{
-			instance->brightness = instance->future.get();
+			singleton->brightness = singleton->future.get();
 		}
 
-		instance->future = std::async(std::launch::async, MonitorUtility::getCurrentBrightness, instance->physicalMonitors);
+		singleton->future = std::async(std::launch::async, MonitorUtility::getCurrentBrightness, singleton->physicalMonitor);
 
-		instance->lastMeasurement = now;
+		singleton->lastMeasurement = now;
 	}
 
-	return instance->brightness;
+	return singleton->brightness;
 }
 
-std::vector<PHYSICAL_MONITOR> MonitorUtility::getPhysicalMonitors()
+HANDLE MonitorUtility::getPhysicalMonitor()
 {
 	HWND hWnd = GetDesktopWindow();
 	HMONITOR hMonitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTOPRIMARY);
@@ -47,27 +47,22 @@ std::vector<PHYSICAL_MONITOR> MonitorUtility::getPhysicalMonitors()
 	DWORD numberOfPhysicalMonitors;
 	if (!GetNumberOfPhysicalMonitorsFromHMONITOR(hMonitor, &numberOfPhysicalMonitors))
 	{
-		return std::vector<PHYSICAL_MONITOR>();
+		return nullptr;
 	}
 
 	std::vector<PHYSICAL_MONITOR> physicalMonitors(numberOfPhysicalMonitors);
 	if (!GetPhysicalMonitorsFromHMONITOR(hMonitor, numberOfPhysicalMonitors, physicalMonitors.data()))
 	{
-		return std::vector<PHYSICAL_MONITOR>();
+		return nullptr;
 	}
 
-	return physicalMonitors;
+	const PHYSICAL_MONITOR physicalMonitor = physicalMonitors[0];
+
+	return physicalMonitor.hPhysicalMonitor;
 }
 
-unsigned MonitorUtility::getCurrentBrightness(const std::vector<PHYSICAL_MONITOR> & physicalMonitors)
+unsigned MonitorUtility::getCurrentBrightness(const HANDLE & physicalMonitor)
 {
-	if (physicalMonitors.size() == 0)
-	{
-		return 100;
-	}
-
-	const HANDLE physicalMonitor = physicalMonitors[0].hPhysicalMonitor;
-
 	DWORD minimumBrightness = 0;
 	DWORD currentBrightness = 0;
 	DWORD maximumBrightness = 0;

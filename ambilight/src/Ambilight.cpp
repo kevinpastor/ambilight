@@ -25,13 +25,13 @@ void Ambilight::start()
 	//FILE * fDummy;
 	//freopen_s(&fDummy, "CONOUT$", "w", stdout);
 
+	//std::chrono::steady_clock::time_point before = std::chrono::steady_clock::now();
+	//std::cout << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - before).count() << std::endl;
+
 	std::vector<Pixel> pixels(this->options.getCoordinates().size());
 
 	std::future<std::vector<Pixel>> captureFuture;
 	std::future<void> sendingFuture;
-
-	//std::chrono::steady_clock::time_point lastSent;
-	//const std::chrono::nanoseconds maximumFrameTime = std::chrono::nanoseconds(1000000000 / this->options.getMaximumFrameRate());
 
 	while (!this->isStopped)
 	{
@@ -53,24 +53,15 @@ void Ambilight::start()
 			continue;
 		}
 
-		//std::chrono::steady_clock::time_point before = std::chrono::steady_clock::now();
 		captureFuture = std::async(std::launch::async, &Ambilight::capture, this, pixels);
 		assert(captureFuture.valid());
 		pixels = captureFuture.get();
-		//std::cout << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - before).count() << std::endl;
-
-		//std::this_thread::sleep_for(maximumFrameTime);
 
 		if (sendingFuture.valid())
 		{
 			sendingFuture.get();
-
-			//std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-			//std::cout << "T  " << std::chrono::duration_cast<std::chrono::microseconds>(now - lastSent).count() << std::endl;
-			//lastSent = now;
 		}
 
-		//lastSent = std::chrono::steady_clock::now();
 		sendingFuture = std::async(std::launch::async, &Ambilight::send, this, pixels);
 	}
 
@@ -102,24 +93,17 @@ void Ambilight::stop()
 
 std::vector<Pixel> Ambilight::capture(std::vector<Pixel> previousPixels) const
 {
-	//std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
 	const Capture capture = this->screenCapture.capture();
-	//std::cout << "C1 " << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - now).count() << std::endl;
 
 	const std::vector<Pixel> currentPixels = this->pixelParser.getPixels(capture);
 	const std::vector<Pixel> colorCorrectedPixels = this->colorGrader.correct(currentPixels);
 
 	return Pixel::mix(colorCorrectedPixels, previousPixels, this->options.getSmoothing());
-	//const std::vector<Pixel> temp = Pixel::mix(colorCorrectedPixels, previousPixels, this->options.getSmoothing());
-	//std::cout << "C  " << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - now).count() << std::endl;
-	//return temp;
 }
 
 void Ambilight::send(std::vector<Pixel> pixels) const
 {
-	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
 	this->arduinoSerial.send(pixels);
-	//std::cout << "S  " << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - now).count() << std::endl;
 }
 
 void Ambilight::fadeOut(const std::vector<Pixel> & pixels) const

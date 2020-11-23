@@ -16,15 +16,14 @@ private:
 	static MonitorUtility * getInstance();
 	static MonitorUtility * instance;
 
-	static std::vector<PHYSICAL_MONITOR> getPhysicalMonitors();
-	static unsigned getCurrentBrightness(const std::vector<PHYSICAL_MONITOR> & physicalMonitors);
+	static HANDLE getPhysicalMonitor();
+	static unsigned getCurrentBrightness(const HANDLE & physicalMonitor);
 
-	const std::vector<PHYSICAL_MONITOR> physicalMonitors;
+	const HANDLE physicalMonitor;
 	unsigned brightness;
 	std::future<unsigned> future;
 	std::chrono::steady_clock::time_point lastMeasurement;
 
-	static const unsigned DIMMED_BRIGHTNESS_LIMIT = 5;
 	static const std::chrono::milliseconds REFRESH_RATE;
 
 };

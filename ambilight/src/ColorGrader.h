@@ -18,6 +18,6 @@ private:
 	const RGBLUT lut;
 	const RGBLUT dimmedLut;
 
-	static const unsigned DIMMED_BRIGHTNESS_LIMIT = 5;
+	static const unsigned DIMMED_BRIGHTNESS_LIMIT = 5; // TODO Extract to configuration file
 
 };

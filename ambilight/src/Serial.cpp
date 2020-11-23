@@ -21,7 +21,7 @@ Serial::Serial(const std::string & portName)
 		throw std::runtime_error("Unable to get serial parameters");
 	}
 
-	dcb.BaudRate = 200000;
+	dcb.BaudRate = Serial::BAUD_RATE;
 	dcb.ByteSize = 8;
 	dcb.StopBits = ONESTOPBIT;
 	dcb.Parity = NOPARITY;
@@ -33,7 +33,7 @@ Serial::Serial(const std::string & portName)
 	}
 
 	PurgeComm(this->handle, PURGE_RXCLEAR | PURGE_TXCLEAR);
-	Sleep(Serial::ARDUINO_WAIT_TIME);
+	Sleep(Serial::WAIT_TIME);
 }
 
 Serial::~Serial()
