@@ -14,12 +14,12 @@ public:
 	Capture(const unsigned char * buffer, const unsigned & width, const unsigned & height);
 
 	Pixel getPixel(const Coordinates & coordinates) const;
+
+	bool isValidPosition(const Coordinates & coordinates) const;
 	bool isValidXPosition(const unsigned & x) const;
 	bool isValidYPosition(const unsigned & y) const;
 
 private:
-	bool isValidPosition(const Coordinates & coordinates) const;
-
 	const unsigned char * buffer;
 	const unsigned width;
 	const unsigned height;

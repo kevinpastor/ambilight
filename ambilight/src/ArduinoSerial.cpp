@@ -1,7 +1,7 @@
 #include "ArduinoSerial.h"
 
-ArduinoSerial::ArduinoSerial(const std::string & portName)
-	: serial("\\\\.\\" + portName)
+ArduinoSerial::ArduinoSerial(const std::string & portName, const unsigned long & baudRate)
+	: serial("\\\\.\\" + portName, baudRate)
 {
 }
 

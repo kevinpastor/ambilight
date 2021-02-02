@@ -9,15 +9,12 @@
 class ColorGrader
 {
 public:
-	ColorGrader(const RGBLUT & lut, const RGBLUT & dimmedLut);
+	ColorGrader(const std::vector<RGBLUT> & luts);
 
 	std::vector<Pixel> correct(const std::vector<Pixel> & pixels) const;
 	Pixel correct(const Pixel & pixel) const;
 
 private:
-	const RGBLUT lut;
-	const RGBLUT dimmedLut;
-
-	static const unsigned DIMMED_BRIGHTNESS_LIMIT = 5; // TODO Extract to configuration file
+	const std::vector<RGBLUT> luts;
 
 };

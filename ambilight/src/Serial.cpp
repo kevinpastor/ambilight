@@ -1,6 +1,6 @@
 #include "Serial.h"
 
-Serial::Serial(const std::string & portName)
+Serial::Serial(const std::string & portName, const unsigned long & baudRate)
 {
 	this->handle = CreateFile(portName.data(), GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
@@ -21,7 +21,7 @@ Serial::Serial(const std::string & portName)
 		throw std::runtime_error("Unable to get serial parameters");
 	}
 
-	dcb.BaudRate = Serial::BAUD_RATE;
+	dcb.BaudRate = baudRate;
 	dcb.ByteSize = 8;
 	dcb.StopBits = ONESTOPBIT;
 	dcb.Parity = NOPARITY;

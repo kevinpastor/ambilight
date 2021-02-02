@@ -9,7 +9,7 @@
 class ArduinoSerial
 {
 public:
-	ArduinoSerial(const std::string & communicationPort);
+	ArduinoSerial(const std::string & communicationPort, const unsigned long & baudRate);
 
 	void send(const std::vector<Pixel> & pixels) const;
 

@@ -9,15 +9,27 @@ Options::Options(const std::string & optionPath)
 	: json(Options::getJson(optionPath)),
 	portName(Options::getPortName(this->json)),
 	radius(Options::getRadius(this->json)),
+	baudRate(Options::getBaudRate(this->json)),
 	coordinates(Options::getCoordinates(this->json)),
 	smoothing(Options::getSmoothing(this->json)),
-	colorGrader(Options::getColorGrader(this->json))
+	colorGrader(Options::getColorGrader(this->json)),
+	lowPowerModeOptions(Options::getLowPowerModeOptions(this->json))
 {
 }
 
 std::string Options::getPortName() const
 {
 	return this->portName;
+}
+
+unsigned long Options::getBaudRate() const
+{
+	return this->baudRate;
+}
+
+LowPowerModeOptions Options::getLowPowerModeOptions() const
+{
+	return this->lowPowerModeOptions;
 }
 
 unsigned Options::getRadius() const
@@ -66,6 +78,50 @@ std::string Options::getPortName(const nlohmann::json & json)
 	}
 
 	return json["portname"].get<std::string>();
+}
+
+unsigned long Options::getBaudRate(const nlohmann::json & json)
+{
+	if (!json.contains("baudRate"))
+	{
+		throw std::runtime_error("Configuration should have attribute \"baudRate\"");
+	}
+
+	if (!json["baudRate"].is_number_unsigned())
+	{
+		throw std::runtime_error("Configuration $[\"baudRate\"] should be a unsigned long");
+	}
+
+	return json["baudRate"].get<unsigned long>();
+}
+
+LowPowerModeOptions Options::getLowPowerModeOptions(const nlohmann::json & json)
+{
+	if (!json.contains("lowPowerMode"))
+	{
+		throw std::runtime_error("Configuration should have attribute \"lowPowerMode\"");
+	}
+
+	return {
+		Options::getLowPowerModeFrameRenderTime(json["lowPowerMode"])
+	};
+}
+
+std::chrono::nanoseconds Options::getLowPowerModeFrameRenderTime(const nlohmann::json & json)
+{
+	if (!json.contains("refreshRate"))
+	{
+		throw std::runtime_error("Configuration $[\"lowPowerMode\"] should have attribute \"refreshRate\"");
+	}
+
+	if (!json["refreshRate"].is_number_unsigned())
+	{
+		throw std::runtime_error("Configuration $[\"lowPowerMode\"][\"refreshRate\"] should be a unsigned");
+	}
+
+	const unsigned refreshRate = json["refreshRate"].get<unsigned>();
+
+	return std::chrono::nanoseconds(1000000000 / refreshRate);
 }
 
 unsigned Options::getRadius(const nlohmann::json & json)
@@ -144,7 +200,14 @@ double Options::getSmoothing(const nlohmann::json & json)
 		throw std::runtime_error("Configuration $[\"smoothing\"] should be a double");
 	}
 
-	return json["smoothing"].get<double>();
+	const double smoothing = json["smoothing"].get<double>();
+
+	if (smoothing < 0.0 || smoothing > 1.0)
+	{
+		throw std::runtime_error("Configuration $[\"smoothing\"] must be between 0.0 and 1.0");
+	}
+
+	return smoothing;
 }
 
 ColorGrader Options::getColorGrader(const nlohmann::json & json)
@@ -164,10 +227,15 @@ ColorGrader Options::getColorGrader(const nlohmann::json & json)
 		throw std::runtime_error("Configuration $[\"luts\"] should have at least one element");
 	}
 
-	return ColorGrader(
-		Options::getRGBLut(json["luts"][0]),
-		Options::getRGBLut(json["luts"][1])
-	);
+	std::vector<RGBLUT> luts;// (json["luts"].size());
+	for (unsigned i = 0; i < json["luts"].size(); ++i)
+	{
+		const nlohmann::json lut = json["luts"][i];
+		//luts[i] = Options::getRGBLut(lut);
+		luts.push_back(Options::getRGBLut(lut));
+	}
+
+	return ColorGrader(luts);
 }
 
 RGBLUT Options::getRGBLut(const nlohmann::json & json)
@@ -187,10 +255,24 @@ RGBLUT Options::getRGBLut(const nlohmann::json & json)
 		throw std::runtime_error("Configuration $[\"luts\"][*] should have attribute \"b\"");
 	}
 
+	if (!json.contains("brightnessThreshold"))
+	{
+		return RGBLUT(
+			Options::getLut(json["r"]),
+			Options::getLut(json["g"]),
+			Options::getLut(json["b"])
+		);
+	}
+	if (!json["brightnessThreshold"].is_number_unsigned())
+	{
+		throw std::runtime_error("Configuration $[\"luts\"][*][\"brightnessThreshold\"] should be an unsigned integer");
+	}
+
 	return RGBLUT(
 		Options::getLut(json["r"]),
 		Options::getLut(json["g"]),
-		Options::getLut(json["b"])
+		Options::getLut(json["b"]),
+		json["brightnessThreshold"].get<unsigned>()
 	);
 }
 

@@ -121,6 +121,7 @@
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeaderFile />
       <PreprocessorDefinitions>NDEBUG</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>Wtsapi32.lib;Dxva2.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -148,6 +149,7 @@
     <ClInclude Include="src\resources\resource.h" />
     <ClInclude Include="src\RGBLUT.h" />
     <ClInclude Include="src\Serial.h" />
+    <ClInclude Include="src\SessionUtility.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Ambilight.cpp" />
@@ -168,6 +170,7 @@
     <ClCompile Include="src\Point.cpp" />
     <ClCompile Include="src\RGBLUT.cpp" />
     <ClCompile Include="src\Serial.cpp" />
+    <ClCompile Include="src\SessionUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

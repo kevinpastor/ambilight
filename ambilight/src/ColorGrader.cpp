@@ -1,8 +1,7 @@
 #include "ColorGrader.h"
 
-ColorGrader::ColorGrader(const RGBLUT & lut, const RGBLUT & dimmedLut)
-	: lut(lut),
-	dimmedLut(dimmedLut)
+ColorGrader::ColorGrader(const std::vector<RGBLUT> & luts)
+	: luts(luts)
 {
 }
 
@@ -19,11 +18,13 @@ std::vector<Pixel> ColorGrader::correct(const std::vector<Pixel> & pixels) const
 
 Pixel ColorGrader::correct(const Pixel & pixel) const
 {
-	const unsigned monitorBrightness = MonitorUtility::getBrightness();
-	if (monitorBrightness > ColorGrader::DIMMED_BRIGHTNESS_LIMIT)
+	for (const RGBLUT & lut : this->luts)
 	{
-		return this->lut.get(pixel);
+		if (lut.isUsable())
+		{
+			return lut.get(pixel);
+		}
 	}
 
-	return this->dimmedLut.get(pixel);
+	throw std::runtime_error("No LUT matching current state");
 }

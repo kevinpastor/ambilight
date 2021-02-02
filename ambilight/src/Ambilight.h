@@ -24,6 +24,8 @@ public:
 	void pause();
 	void stop();
 
+	void toggleLowPowerMode();
+
 private:
 	std::vector<Pixel> capture(std::vector<Pixel> previousPixels) const;
 	void send(std::vector<Pixel> pixels) const;
@@ -40,6 +42,7 @@ private:
 
 	bool isStopped;
 	bool isPaused;
+	bool isOnLowPowerMode;
 
 	static const std::chrono::milliseconds PAUSED_REFRESH_RATE;
 

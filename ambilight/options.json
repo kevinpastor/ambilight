@@ -1,7 +1,12 @@
 {
-    "smoothing": 0.6,
+    "smoothing": 0.5,
     "portname": "COM4",
     "radius": 35,
+    "baudRate": 200000,
+    "lowPowerMode": 
+    {
+        "refreshRate": 15
+    },
     "luts": [
         {
             "r": {
@@ -30,15 +35,7 @@
             }
         },
         {
-            "condition": [
-                "<=",
-                {
-                    "data": "brightness"
-                },
-                {
-                    "value": 5
-                }
-            ],
+            "brightnessThreshold": 5,
             "r": {
                 "type": "oneDimensionBezierCurve",
                 "controlValues": [

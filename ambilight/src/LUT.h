@@ -10,7 +10,7 @@ class LUT
 public:
 	LUT(const AbstractCurve & curve);
 
-	unsigned char get(const unsigned char & value) const;
+	unsigned char get(const unsigned char & isSignedIn) const;
 
 private:
 	static std::vector<unsigned char> getData(const AbstractCurve & curve);

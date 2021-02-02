@@ -11,3 +11,5 @@
 17/11/2020 10:46:52 Test
 17/11/2020 10:47:03 Test
 17/11/2020 10:47:50 Test
+21/12/2020 10:49:19 Serial handle was not attached
+21/12/2020 10:49:26 Serial handle was not attached

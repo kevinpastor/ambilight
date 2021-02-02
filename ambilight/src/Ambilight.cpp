@@ -4,13 +4,14 @@ const std::chrono::milliseconds Ambilight::PAUSED_REFRESH_RATE = std::chrono::mi
 
 Ambilight::Ambilight()
 	: options(),
-	arduinoSerial(this->options.getPortName()),
+	arduinoSerial(this->options.getPortName(), this->options.getBaudRate()),
 	colorGrader(this->options.getColorGrader()),
 	pixelParser(this->options.getCoordinates(), this->options.getRadius()),
 	screenCapture(this->options.getCoordinates(), this->options.getRadius()),
 	mutex(),
 	isStopped(false),
-	isPaused(false)
+	isPaused(false),
+	isOnLowPowerMode(false)
 {
 }
 
@@ -25,13 +26,12 @@ void Ambilight::start()
 	//FILE * fDummy;
 	//freopen_s(&fDummy, "CONOUT$", "w", stdout);
 
-	//std::chrono::steady_clock::time_point before = std::chrono::steady_clock::now();
-	//std::cout << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - before).count() << std::endl;
-
 	std::vector<Pixel> pixels(this->options.getCoordinates().size());
 
 	std::future<std::vector<Pixel>> captureFuture;
 	std::future<void> sendingFuture;
+
+	std::chrono::steady_clock::time_point lastSent = std::chrono::steady_clock::now();
 
 	while (!this->isStopped)
 	{
@@ -62,7 +62,17 @@ void Ambilight::start()
 			sendingFuture.get();
 		}
 
+		if (this->isOnLowPowerMode)
+		{
+			const std::chrono::steady_clock::duration frameTime = std::chrono::steady_clock::now() - lastSent;
+			if (frameTime < this->options.getLowPowerModeOptions().frameRenderTime)
+			{
+				std::this_thread::sleep_for(this->options.getLowPowerModeOptions().frameRenderTime - frameTime);
+			}
+		}
+
 		sendingFuture = std::async(std::launch::async, &Ambilight::send, this, pixels);
+		lastSent = std::chrono::steady_clock::now();
 	}
 
 	if (captureFuture.valid())
@@ -91,6 +101,11 @@ void Ambilight::stop()
 	this->isStopped = true;
 }
 
+void Ambilight::toggleLowPowerMode()
+{
+	this->isOnLowPowerMode = !this->isOnLowPowerMode;
+}
+
 std::vector<Pixel> Ambilight::capture(std::vector<Pixel> previousPixels) const
 {
 	const Capture capture = this->screenCapture.capture();
@@ -98,6 +113,7 @@ std::vector<Pixel> Ambilight::capture(std::vector<Pixel> previousPixels) const
 	const std::vector<Pixel> currentPixels = this->pixelParser.getPixels(capture);
 	const std::vector<Pixel> colorCorrectedPixels = this->colorGrader.correct(currentPixels);
 
+	// TODO Take into consideration render time for mixing weight
 	return Pixel::mix(colorCorrectedPixels, previousPixels, this->options.getSmoothing());
 }
 

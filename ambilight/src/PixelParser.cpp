@@ -26,7 +26,7 @@ std::vector<Pixel> PixelParser::getSurrounding(const Capture & capture, const Co
 		return std::vector<Pixel>(1, Pixel({ 0, 0, 0 }));
 	}
 
-	if (!capture.isValidXPosition(region.x) || !capture.isValidYPosition(region.y))
+	if (!capture.isValidPosition(region))
 	{
 		return std::vector<Pixel>(1, Pixel({ 0, 0, 0 }));
 	}
@@ -47,29 +47,23 @@ std::vector<Pixel> PixelParser::getSurrounding(const Capture & capture, const Co
 	pixels.reserve(4ull * radius * radius);
 	for (unsigned x = minX; x < maxX; ++x)
 	{
-		if (!capture.isValidXPosition(x))
-		{
-			continue;
-		}
+		assert(capture.isValidXPosition(x));
 
 		unsigned minY = region.y;
-		if (capture.isValidXPosition(region.y - radius))
+		if (capture.isValidYPosition(region.y - radius))
 		{
 			minY = region.y - radius;
 		}
 
 		unsigned maxY = region.y;
-		if (capture.isValidXPosition(region.y + radius))
+		if (capture.isValidYPosition(region.y + radius))
 		{
 			maxY = region.y + radius;
 		}
 
 		for (unsigned y = minY; y < maxY; ++y)
 		{
-			if (!capture.isValidYPosition(y))
-			{
-				continue;
-			}
+			assert(capture.isValidYPosition(y));
 
 			const Coordinates coordinates({ static_cast<int>(x), static_cast<int>(y) });
 			const Pixel pixel = capture.getPixel(coordinates);

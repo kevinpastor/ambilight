@@ -41,8 +41,8 @@ unsigned MonitorUtility::getBrightness()
 
 HANDLE MonitorUtility::getPhysicalMonitor()
 {
-	HWND hWnd = GetDesktopWindow();
-	HMONITOR hMonitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTOPRIMARY);
+	HWND window = GetDesktopWindow();
+	HMONITOR hMonitor = MonitorFromWindow(window, MONITOR_DEFAULTTOPRIMARY);
 
 	DWORD numberOfPhysicalMonitors;
 	if (!GetNumberOfPhysicalMonitorsFromHMONITOR(hMonitor, &numberOfPhysicalMonitors))

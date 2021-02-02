@@ -10,9 +10,9 @@ int App::start(const HINSTANCE & hInstance)
 		return 0;
 	}
 
-	HWND hWnd = App::createWindow(this);
+	HWND window = App::createWindow(this);
 
-	NOTIFYICONDATA notifyIconData = App::getNotifyIconData(hInstance, hWnd);
+	NOTIFYICONDATA notifyIconData = App::getNotifyIconData(hInstance, window);
 	if (!Shell_NotifyIcon(NIM_ADD, &notifyIconData))
 	{
 		throw std::runtime_error("Unable to add the icon to the taskbar's status area");
@@ -22,13 +22,17 @@ int App::start(const HINSTANCE & hInstance)
 	{
 		try
 		{
+			while (!SessionUtility::hasSignedIn())
+			{
+				std::this_thread::sleep_for(std::chrono::milliseconds(50));
+			}
 			this->ambilight.start();
 		}
 		catch (std::exception & exception)
 		{
 			Logger::log(exception);
 
-			if (!PostMessage(hWnd, WM_CLOSE, NULL, NULL))
+			if (!PostMessage(window, WM_CLOSE, NULL, NULL))
 			{
 				Logger::log(std::runtime_error("Unable to successfully close the app"));
 			}
@@ -37,7 +41,7 @@ int App::start(const HINSTANCE & hInstance)
 		{
 			Logger::log(std::exception("Unexcepected error"));
 
-			if (!PostMessage(hWnd, WM_CLOSE, NULL, NULL))
+			if (!PostMessage(window, WM_CLOSE, NULL, NULL))
 			{
 				Logger::log(std::runtime_error("Unable to successfully close the app"));
 			}
@@ -56,14 +60,14 @@ int App::start(const HINSTANCE & hInstance)
 	return returnCode;
 }
 
-LRESULT App::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT App::WindowProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	LONG_PTR data = GetWindowLongPtr(hWnd, GWLP_USERDATA);
+	LONG_PTR data = GetWindowLongPtr(window, GWLP_USERDATA);
 	if (message == WM_NCCREATE)
 	{
 		data = reinterpret_cast<LONG_PTR>(reinterpret_cast<CREATESTRUCT *>(lParam)->lpCreateParams);
 		SetLastError(0);
-		if (SetWindowLongPtr(hWnd, GWLP_USERDATA, data) == 0)
+		if (SetWindowLongPtr(window, GWLP_USERDATA, data) == 0)
 		{
 			if (GetLastError() != 0)
 			{
@@ -77,19 +81,19 @@ LRESULT App::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	if (data != 0)
 	{
 		App * app = reinterpret_cast<App *>(data);
-		return app->onMessage(hWnd, message, wParam, lParam);
+		return app->onMessage(window, message, wParam, lParam);
 	}
 
-	return DefWindowProc(hWnd, message, wParam, lParam);
+	return DefWindowProc(window, message, wParam, lParam);
 }
 
-LRESULT App::onMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT App::onMessage(HWND window, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message)
 	{
 		case (WM_CREATE):
 		{
-			return this->onCreate(hWnd);
+			return this->onCreate(window);
 		}
 		case (WM_WTSSESSION_CHANGE):
 		{
@@ -97,26 +101,31 @@ LRESULT App::onMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		case (App::WM_SYSICON):
 		{
-			return this->onFocus(hWnd, lParam);
+			return this->onFocus(window, lParam);
 		}
 		case (WM_DESTROY):
 		{
-			return this->onDestroy(hWnd);
+			return this->onDestroy(window);
 		}
 	}
 
-	return DefWindowProc(hWnd, message, wParam, lParam);
+	return DefWindowProc(window, message, wParam, lParam);
 }
 
-LRESULT App::onCreate(const HWND & hWnd) const
+LRESULT App::onCreate(const HWND & window) const
 {
-	WTSRegisterSessionNotification(hWnd, NOTIFY_FOR_THIS_SESSION);
+	WTSRegisterSessionNotification(window, NOTIFY_FOR_THIS_SESSION);
 
-	ShowWindow(hWnd, SW_HIDE);
+	ShowWindow(window, SW_HIDE);
 	HMENU mainMenu = CreateMenu();
 	HMENU subMenu = CreatePopupMenu();
 
 	if (!AppendMenu(subMenu, MF_STRING, App::ID_TRAY_TOGGLE, "Pause"))
+	{
+		throw std::runtime_error("Unable to add menu option");
+	}
+
+	if (!AppendMenu(subMenu, MF_STRING, App::ID_TRAY_LOW_POWER_MODE, "Low Power Mode"))
 	{
 		throw std::runtime_error("Unable to add menu option");
 	}
@@ -131,7 +140,7 @@ LRESULT App::onCreate(const HWND & hWnd) const
 		throw std::runtime_error("Unable to add menu option");
 	}
 
-	if (!SetMenu(hWnd, mainMenu))
+	if (!SetMenu(window, mainMenu))
 	{
 		throw std::runtime_error("Unable to set the menu");
 	}
@@ -158,11 +167,11 @@ LRESULT App::onSessionChange(const WPARAM & wParam)
 	return -1;
 }
 
-LRESULT App::onFocus(const HWND & hWnd, const LPARAM & lParam)
+LRESULT App::onFocus(const HWND & window, const LPARAM & lParam)
 {
 	if (lParam == WM_RBUTTONDOWN)
 	{
-		SetForegroundWindow(hWnd);
+		SetForegroundWindow(window);
 
 		// Get current mouse position.
 		POINT curPoint;
@@ -171,40 +180,45 @@ LRESULT App::onFocus(const HWND & hWnd, const LPARAM & lParam)
 			throw std::runtime_error("Unable to get cursor position");
 		}
 
-		HMENU mainMenu = GetMenu(hWnd);
+		HMENU mainMenu = GetMenu(window);
 		HMENU subMenu = GetSubMenu(mainMenu, 0);
 
 		// TrackPopupMenu blocks the app until TrackPopupMenu returns
-		const BOOL itemId = TrackPopupMenu(subMenu, TPM_RETURNCMD | TPM_NONOTIFY, curPoint.x, curPoint.y, NULL, hWnd, NULL);
-		SendMessage(hWnd, WM_NULL, NULL, NULL); // Send benign message to window to make sure the menu goes away.
+		const BOOL itemId = TrackPopupMenu(subMenu, TPM_RETURNCMD | TPM_NONOTIFY, curPoint.x, curPoint.y, NULL, window, NULL);
+		SendMessage(window, WM_NULL, NULL, NULL); // Send benign message to window to make sure the menu goes away.
 
-		return this->onClick(hWnd, itemId);
+		return this->onClick(window, itemId);
 	}
 
 	return -1;
 }
 
-LRESULT App::onClick(const HWND & hWnd, const int & itemId)
+LRESULT App::onClick(const HWND & window, const int & itemId)
 {
 	switch (itemId)
 	{
 		case (App::ID_TRAY_TOGGLE):
 		{
-			return this->onClickToggle(hWnd);
+			return this->onClickToggle(window);
 		}
 
 		case (App::ID_TRAY_EXIT):
 		{
-			return this->onClickExit(hWnd);
+			return this->onClickExit(window);
+		}
+
+		case (App::ID_TRAY_LOW_POWER_MODE):
+		{
+			return this->onClickLowPowerMode(window);
 		}
 	}
 
 	return -1;
 }
 
-LRESULT App::onClickToggle(const HWND & hWnd)
+LRESULT App::onClickToggle(const HWND & window)
 {
-	HMENU mainMenu = GetMenu(hWnd);
+	HMENU mainMenu = GetMenu(window);
 	HMENU subMenu = GetSubMenu(mainMenu, 0);
 
 	MENUITEMINFO menuItemInfo = { sizeof(MENUITEMINFO) };
@@ -227,7 +241,7 @@ LRESULT App::onClickToggle(const HWND & hWnd)
 	std::string label(buffer.begin(), buffer.end() - 1); // Skipping the null character
 	if (label == "Pause")
 	{
-		menuItemInfo.dwTypeData = "Resume";
+		menuItemInfo.dwTypeData = const_cast<char *>("Resume");
 		menuItemInfo.cch = sizeof("Resume");
 		if (!SetMenuItemInfo(subMenu, App::ID_TRAY_TOGGLE, FALSE, &menuItemInfo))
 		{
@@ -238,7 +252,7 @@ LRESULT App::onClickToggle(const HWND & hWnd)
 	}
 	else
 	{
-		menuItemInfo.dwTypeData = "Pause";
+		menuItemInfo.dwTypeData = const_cast<char *>("Pause");
 		menuItemInfo.cch = sizeof("Pause");
 		if (!SetMenuItemInfo(subMenu, App::ID_TRAY_TOGGLE, FALSE, &menuItemInfo))
 		{
@@ -251,9 +265,41 @@ LRESULT App::onClickToggle(const HWND & hWnd)
 	return 0;
 }
 
-LRESULT App::onClickExit(const HWND & hWnd) const
+LRESULT App::onClickLowPowerMode(const HWND & window)
 {
-	if (!PostMessage(hWnd, WM_CLOSE, NULL, NULL))
+	HMENU mainMenu = GetMenu(window);
+	HMENU subMenu = GetSubMenu(mainMenu, 0);
+
+	MENUITEMINFO menuItemInfo = { sizeof(MENUITEMINFO) };
+	menuItemInfo.fMask = MIIM_STATE;
+	if (!GetMenuItemInfo(subMenu, App::ID_TRAY_LOW_POWER_MODE, FALSE, &menuItemInfo))
+	{
+		throw std::runtime_error("Unable to get menu item");
+	}
+
+	if ((menuItemInfo.fState & MF_CHECKED) != 0)
+	{
+		if (CheckMenuItem(subMenu, App::ID_TRAY_LOW_POWER_MODE, MF_UNCHECKED) == -1)
+		{
+			throw std::runtime_error("Unable to uncheck menu item");
+		}
+	}
+	else
+	{
+		if (CheckMenuItem(subMenu, App::ID_TRAY_LOW_POWER_MODE, MF_CHECKED) == -1)
+		{
+			throw std::runtime_error("Unable to check menu item");
+		}
+	}
+
+	this->ambilight.toggleLowPowerMode();
+
+	return 0;
+}
+
+LRESULT App::onClickExit(const HWND & window) const
+{
+	if (!PostMessage(window, WM_CLOSE, NULL, NULL))
 	{
 		throw std::runtime_error("Unable to successfully close the app");
 	}
@@ -261,11 +307,10 @@ LRESULT App::onClickExit(const HWND & hWnd) const
 	return 0;
 }
 
-LRESULT App::onDestroy(const HWND & hWnd) const
+LRESULT App::onDestroy(const HWND & window) const
 {
-	NOTIFYICONDATA notifyIconData;
-	SecureZeroMemory(&notifyIconData, sizeof(NOTIFYICONDATA));
-	notifyIconData.hWnd = hWnd;
+	NOTIFYICONDATA notifyIconData = { sizeof(NOTIFYICONDATA) };
+	notifyIconData.hWnd = window;
 	notifyIconData.uID = App::ID_TRAY_APP_ICON;
 	if (!Shell_NotifyIcon(NIM_DELETE, &notifyIconData))
 	{
@@ -279,42 +324,42 @@ LRESULT App::onDestroy(const HWND & hWnd) const
 
 HWND App::createWindow(App * app)
 {
-	HWND hWnd = CreateWindowEx(NULL, App::name.c_str(), App::name.c_str(), NULL, 0, 0, 0, 0, HWND_MESSAGE, NULL, NULL, app);
-	if (hWnd == NULL)
+	HWND window = CreateWindowEx(NULL, App::name.c_str(), App::name.c_str(), NULL, 0, 0, 0, 0, HWND_MESSAGE, NULL, NULL, app);
+	if (window == NULL)
 	{
 		throw std::runtime_error("Unable to start the app");
 	}
 
-	return hWnd;
+	return window;
 }
 
 WNDCLASSEX App::getWindowClass(const HINSTANCE & instance)
 {
-	WNDCLASSEX wincl;
+	WNDCLASSEX windowClass;
 
-	wincl.cbSize = sizeof(WNDCLASSEX);
-	wincl.style = NULL;
-	wincl.lpfnWndProc = App::WindowProc; // This function is called by windows
-	wincl.cbClsExtra = 0; // No extra bytes after the window class
-	wincl.cbWndExtra = 0; // structure or the window instance
-	wincl.hInstance = instance;
-	wincl.hIcon = App::getIcon(instance);
-	wincl.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wincl.hbrBackground = NULL;
-	wincl.lpszMenuName = NULL;
-	wincl.lpszClassName = App::name.c_str();
-	wincl.hIconSm = App::getIcon(instance);
+	windowClass.cbSize = sizeof(WNDCLASSEX);
+	windowClass.style = NULL;
+	windowClass.lpfnWndProc = App::WindowProc; // This function is called by windows
+	windowClass.cbClsExtra = 0; // No extra bytes after the window class
+	windowClass.cbWndExtra = 0; // structure or the window instance
+	windowClass.hInstance = instance;
+	windowClass.hIcon = App::getIcon(instance);
+	windowClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+	windowClass.hbrBackground = NULL;
+	windowClass.lpszMenuName = NULL;
+	windowClass.lpszClassName = App::name.c_str();
+	windowClass.hIconSm = App::getIcon(instance);
 
-	return wincl;
+	return windowClass;
 }
 
-NOTIFYICONDATA App::getNotifyIconData(const HINSTANCE & instance, const HWND & hWnd)
+NOTIFYICONDATA App::getNotifyIconData(const HINSTANCE & instance, const HWND & window)
 {
 	NOTIFYICONDATA notifyIconData;
 
 	SecureZeroMemory(&notifyIconData, sizeof(NOTIFYICONDATA));
 	notifyIconData.cbSize = sizeof(NOTIFYICONDATA);
-	notifyIconData.hWnd = hWnd;
+	notifyIconData.hWnd = window;
 	notifyIconData.uID = App::ID_TRAY_APP_ICON;
 	notifyIconData.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 	notifyIconData.uCallbackMessage = App::WM_SYSICON;
