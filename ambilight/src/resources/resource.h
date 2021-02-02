@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by ambilight.rc
+// Used by app.rc
 //
 #define TASKBAR_ICON                    101
 

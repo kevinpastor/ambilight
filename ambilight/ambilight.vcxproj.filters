@@ -1,79 +1,148 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="src">
+      <UniqueIdentifier>{de0e89bd-8437-4b65-9024-2921bb51b29c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="src\resources">
+      <UniqueIdentifier>{2e8d67a9-a5df-4163-a13e-f54e63db7931}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Ambilight.cpp">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="src\Ambilight.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Coordinates.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Options.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pixel.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PixelParser.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Capture.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Point.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\App.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources\resource.h">
+      <Filter>src\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Logger.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AbstractCurve.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BezierCurve.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ColorGrader.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LUT.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\OneDimensionBezierCurve.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RGBLUT.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ArduinoSerial.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Serial.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MonitorUtility.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ScreenCapture.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SessionUtility.h">
+      <Filter>src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Ambilight.cpp">
+      <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="ArduinoSerial.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\main.cpp">
+      <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\Options.cpp">
+      <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="PixelParser.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\PixelParser.cpp">
+      <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="ScreenCapture.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\Capture.cpp">
+      <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Serial.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\App.cpp">
+      <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Options.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\Logger.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BezierCurve.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ColorGrader.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LUT.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OneDimensionBezierCurve.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RGBLUT.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ArduinoSerial.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Serial.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MonitorUtility.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Point.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pixel.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ScreenCapture.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SessionUtility.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Ambilight.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ArduinoSerial.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Coordinates.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Pixel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PixelParser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ScreenCapture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Serial.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Options.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="ambilight.rc">
-      <Filter>Resource Files</Filter>
+    <ResourceCompile Include="src\resources\app.rc">
+      <Filter>src\resources</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="icon.ico">
-      <Filter>Resource Files</Filter>
+    <Image Include="src\resources\icon.ico">
+      <Filter>src\resources</Filter>
     </Image>
   </ItemGroup>
 </Project>
