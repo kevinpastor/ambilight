@@ -26,7 +26,7 @@ private:
 	LRESULT onFocus(const HWND & window, const LPARAM & lParam);
 	LRESULT onClick(const HWND & window, const int & itemId);
 	LRESULT onClickToggle(const HWND & window);
-	LRESULT onClickLowPowerMode(const HWND & window);
+	LRESULT onClickHighFidelityMode(const HWND & window);
 	LRESULT onClickExit(const HWND & window) const;
 	LRESULT onDestroy(const HWND & window) const;
 
@@ -43,7 +43,7 @@ private:
 	static const unsigned WM_SYSICON = (WM_USER + 1);
 	static const unsigned ID_TRAY_APP_ICON = 1001;
 	static const unsigned ID_TRAY_TOGGLE = ID_TRAY_APP_ICON + 1;
-	static const unsigned ID_TRAY_LOW_POWER_MODE = ID_TRAY_TOGGLE + 1;
-	static const unsigned ID_TRAY_EXIT = ID_TRAY_LOW_POWER_MODE + 1;
+	static const unsigned ID_TRAY_HIGH_FIDELITY_MODE = ID_TRAY_TOGGLE + 1;
+	static const unsigned ID_TRAY_EXIT = ID_TRAY_HIGH_FIDELITY_MODE + 1;
 
 };

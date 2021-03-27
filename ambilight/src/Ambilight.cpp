@@ -11,7 +11,7 @@ Ambilight::Ambilight()
 	mutex(),
 	isStopped(false),
 	isPaused(false),
-	isOnLowPowerMode(false)
+	isHighFidelityModeOn(false)
 {
 }
 
@@ -62,12 +62,12 @@ void Ambilight::start()
 			sendingFuture.get();
 		}
 
-		if (this->isOnLowPowerMode)
+		if (!this->isHighFidelityModeOn)
 		{
 			const std::chrono::steady_clock::duration frameTime = std::chrono::steady_clock::now() - lastSent;
-			if (frameTime < this->options.getLowPowerModeOptions().frameRenderTime)
+			if (frameTime < this->options.getTargetFrameRenderTime())
 			{
-				std::this_thread::sleep_for(this->options.getLowPowerModeOptions().frameRenderTime - frameTime);
+				std::this_thread::sleep_for(this->options.getTargetFrameRenderTime() - frameTime);
 			}
 		}
 
@@ -101,9 +101,9 @@ void Ambilight::stop()
 	this->isStopped = true;
 }
 
-void Ambilight::toggleLowPowerMode()
+void Ambilight::toggleHighFidelityMode()
 {
-	this->isOnLowPowerMode = !this->isOnLowPowerMode;
+	this->isHighFidelityModeOn = !this->isHighFidelityModeOn;
 }
 
 std::vector<Pixel> Ambilight::capture(std::vector<Pixel> previousPixels) const

@@ -13,7 +13,7 @@ Options::Options(const std::string & optionPath)
 	coordinates(Options::getCoordinates(this->json)),
 	smoothing(Options::getSmoothing(this->json)),
 	colorGrader(Options::getColorGrader(this->json)),
-	lowPowerModeOptions(Options::getLowPowerModeOptions(this->json))
+	targetFrameRenderTime(Options::getTargetFrameRenderTime(this->json))
 {
 }
 
@@ -27,9 +27,9 @@ unsigned long Options::getBaudRate() const
 	return this->baudRate;
 }
 
-LowPowerModeOptions Options::getLowPowerModeOptions() const
+std::chrono::nanoseconds Options::getTargetFrameRenderTime() const
 {
-	return this->lowPowerModeOptions;
+	return this->targetFrameRenderTime;
 }
 
 unsigned Options::getRadius() const
@@ -95,33 +95,21 @@ unsigned long Options::getBaudRate(const nlohmann::json & json)
 	return json["baudRate"].get<unsigned long>();
 }
 
-LowPowerModeOptions Options::getLowPowerModeOptions(const nlohmann::json & json)
+std::chrono::nanoseconds Options::getTargetFrameRenderTime(const nlohmann::json & json)
 {
-	if (!json.contains("lowPowerMode"))
+	if (!json.contains("targetFrameRate"))
 	{
-		throw std::runtime_error("Configuration should have attribute \"lowPowerMode\"");
+		throw std::runtime_error("Configuration should have attribute \"targetFrameRate\"");
 	}
 
-	return {
-		Options::getLowPowerModeFrameRenderTime(json["lowPowerMode"])
-	};
-}
-
-std::chrono::nanoseconds Options::getLowPowerModeFrameRenderTime(const nlohmann::json & json)
-{
-	if (!json.contains("refreshRate"))
+	if (!json["targetFrameRate"].is_number_unsigned())
 	{
-		throw std::runtime_error("Configuration $[\"lowPowerMode\"] should have attribute \"refreshRate\"");
+		throw std::runtime_error("Configuration $[\"targetFrameRate\"] should be a unsigned");
 	}
 
-	if (!json["refreshRate"].is_number_unsigned())
-	{
-		throw std::runtime_error("Configuration $[\"lowPowerMode\"][\"refreshRate\"] should be a unsigned");
-	}
+	const unsigned targetRefreshRate = json["targetFrameRate"].get<unsigned>();
 
-	const unsigned refreshRate = json["refreshRate"].get<unsigned>();
-
-	return std::chrono::nanoseconds(1000000000 / refreshRate);
+	return std::chrono::nanoseconds(1000000000 / targetRefreshRate);
 }
 
 unsigned Options::getRadius(const nlohmann::json & json)

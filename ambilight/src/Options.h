@@ -12,11 +12,6 @@
 #include "OneDimensionBezierCurve.h"
 #include "RGBLUT.h"
 
-struct LowPowerModeOptions
-{
-	const std::chrono::nanoseconds frameRenderTime;
-};
-
 class Options
 {
 public:
@@ -25,7 +20,7 @@ public:
 
 	std::string getPortName() const;
 	unsigned long getBaudRate() const;
-	LowPowerModeOptions getLowPowerModeOptions() const;
+	std::chrono::nanoseconds getTargetFrameRenderTime() const;
 	unsigned getRadius() const;
 	std::vector<Coordinates> getCoordinates() const;
 	double getSmoothing() const;
@@ -38,8 +33,7 @@ private:
 
 	static unsigned long getBaudRate(const nlohmann::json & json);
 
-	static LowPowerModeOptions getLowPowerModeOptions(const nlohmann::json & json);
-	static std::chrono::nanoseconds getLowPowerModeFrameRenderTime(const nlohmann::json & json);
+	static std::chrono::nanoseconds getTargetFrameRenderTime(const nlohmann::json & json);
 
 	static unsigned getRadius(const nlohmann::json & json);
 
@@ -59,6 +53,6 @@ private:
 	const std::vector<Coordinates> coordinates;
 	const double smoothing;
 	const ColorGrader colorGrader;
-	const LowPowerModeOptions lowPowerModeOptions;
+	const std::chrono::nanoseconds targetFrameRenderTime;
 
 };

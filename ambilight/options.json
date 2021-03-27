@@ -3,10 +3,7 @@
     "portname": "COM4",
     "radius": 35,
     "baudRate": 200000,
-    "lowPowerMode": 
-    {
-        "refreshRate": 15
-    },
+    "targetFrameRate": 15,
     "luts": [
         {
             "r": {
