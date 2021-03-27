@@ -32,11 +32,11 @@ The `luts` field is used to adjust the color accuracy of the pixels. The first o
 
 ### Smoothing
 
-The `smoothing` field gives the user the ability to have the pixels slowly respond to changes on the screen. Its value should be between 0 and 1. The effect of this option may change in the near future.
+The `smoothing` field gives the user the ability to have the pixels slowly respond to changes on the screen. Its value should be between 0 and 1.
 
-### Low Power Mode
+### Target frame rate
 
-The `lowPowerMode` field is used when the low power mode is activated from the task bar. It limits the program refresh rate, thus reducing CPU load. The effect of this option may change in the near future.
+The `targetFrameRate` field is used when the high fidelity mode is not activated. It limits the program refresh rate, thus reducing CPU load. High fidelity mode can be enabled from the taskbar when a smoother result is needed but will result in higher CPU usage.
 
 ## Additional info
 

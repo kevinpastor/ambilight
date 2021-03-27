@@ -125,7 +125,7 @@ LRESULT App::onCreate(const HWND & window) const
 		throw std::runtime_error("Unable to add menu option");
 	}
 
-	if (!AppendMenu(subMenu, MF_STRING, App::ID_TRAY_LOW_POWER_MODE, "Low Power Mode"))
+	if (!AppendMenu(subMenu, MF_STRING, App::ID_TRAY_HIGH_FIDELITY_MODE, "High Fidelity Mode"))
 	{
 		throw std::runtime_error("Unable to add menu option");
 	}
@@ -207,9 +207,9 @@ LRESULT App::onClick(const HWND & window, const int & itemId)
 			return this->onClickExit(window);
 		}
 
-		case (App::ID_TRAY_LOW_POWER_MODE):
+		case (App::ID_TRAY_HIGH_FIDELITY_MODE):
 		{
-			return this->onClickLowPowerMode(window);
+			return this->onClickHighFidelityMode(window);
 		}
 	}
 
@@ -265,34 +265,34 @@ LRESULT App::onClickToggle(const HWND & window)
 	return 0;
 }
 
-LRESULT App::onClickLowPowerMode(const HWND & window)
+LRESULT App::onClickHighFidelityMode(const HWND & window)
 {
 	HMENU mainMenu = GetMenu(window);
 	HMENU subMenu = GetSubMenu(mainMenu, 0);
 
 	MENUITEMINFO menuItemInfo = { sizeof(MENUITEMINFO) };
 	menuItemInfo.fMask = MIIM_STATE;
-	if (!GetMenuItemInfo(subMenu, App::ID_TRAY_LOW_POWER_MODE, FALSE, &menuItemInfo))
+	if (!GetMenuItemInfo(subMenu, App::ID_TRAY_HIGH_FIDELITY_MODE, FALSE, &menuItemInfo))
 	{
 		throw std::runtime_error("Unable to get menu item");
 	}
 
 	if ((menuItemInfo.fState & MF_CHECKED) != 0)
 	{
-		if (CheckMenuItem(subMenu, App::ID_TRAY_LOW_POWER_MODE, MF_UNCHECKED) == -1)
+		if (CheckMenuItem(subMenu, App::ID_TRAY_HIGH_FIDELITY_MODE, MF_UNCHECKED) == -1)
 		{
 			throw std::runtime_error("Unable to uncheck menu item");
 		}
 	}
 	else
 	{
-		if (CheckMenuItem(subMenu, App::ID_TRAY_LOW_POWER_MODE, MF_CHECKED) == -1)
+		if (CheckMenuItem(subMenu, App::ID_TRAY_HIGH_FIDELITY_MODE, MF_CHECKED) == -1)
 		{
 			throw std::runtime_error("Unable to check menu item");
 		}
 	}
 
-	this->ambilight.toggleLowPowerMode();
+	this->ambilight.toggleHighFidelityMode();
 
 	return 0;
 }
